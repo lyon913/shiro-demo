@@ -3,6 +3,9 @@ package com.whr.activiti.service;
 import javax.transaction.Transactional;
 
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +14,7 @@ import com.whr.activiti.model.Apply;
 
 @Service
 public class ApplyServiceImpl implements ApplyService {
+	private final Logger logger = LoggerFactory.getLogger(ApplyServiceImpl.class);
 	
 	@Autowired
 	private ApplyRepo ar;
@@ -33,8 +37,8 @@ public class ApplyServiceImpl implements ApplyService {
 
 	@Transactional
 	public void startProcess() {
-		rs.startProcessInstanceById("activitiReview");
-		
+		ProcessInstance p = rs.startProcessInstanceByKey("p_register");
+		logger.info("process started:"+p.getProcessInstanceId());
 	}
 
 }
