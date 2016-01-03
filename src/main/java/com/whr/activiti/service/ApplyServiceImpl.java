@@ -1,9 +1,19 @@
 package com.whr.activiti.service;
 
+import java.io.InputStream;
+import java.util.Collections;
+
 import javax.transaction.Transactional;
 
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.activiti.image.ProcessDiagramGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,30 +25,66 @@ import com.whr.activiti.model.Apply;
 @Service
 public class ApplyServiceImpl implements ApplyService {
 	private final Logger logger = LoggerFactory.getLogger(ApplyServiceImpl.class);
-	
+
 	@Autowired
 	private ApplyRepo ar;
+
+	@Autowired
+	private RuntimeService runtime;
 	
 	@Autowired
-	private RuntimeService rs;
-	
-//	@Autowired
-//	private TaskService ts;
+	private TaskService task;
 
+	@Autowired
+	private RepositoryService repo;
+
+	@Autowired
+	private ProcessEngineConfiguration processEngineConfiguration;
+
+	@Override
 	public Apply findById(long id) {
 		return ar.findOne(id);
 
 	}
 
+	@Override
 	@Transactional
 	public Apply save(Apply apply) {
 		return ar.save(apply);
 	}
 
+	@Override
 	@Transactional
-	public void startProcess() {
-		ProcessInstance p = rs.startProcessInstanceByKey("p_register");
-		logger.info("process started:"+p.getProcessInstanceId());
+	public String startProcess() {
+		ProcessInstance p = runtime.startProcessInstanceByKey("p_register");
+		logger.info("process started:" + p.getProcessInstanceId());
+		
+		return p.getId();
+	}
+
+	@Override
+	public InputStream getProcessDiagram(String pid) {
+		ProcessInstance processInstance = runtime.createProcessInstanceQuery().processInstanceId(pid).singleResult();
+
+		ProcessDefinition pde = repo.getProcessDefinition(processInstance.getProcessDefinitionId());
+
+		ProcessDiagramGenerator dg = processEngineConfiguration.getProcessDiagramGenerator();
+
+		BpmnModel bpmnModel = repo.getBpmnModel(pde.getId());
+		InputStream resource = dg.generateDiagram(bpmnModel, "png",
+				runtime.getActiveActivityIds(processInstance.getId()), Collections.<String> emptyList(),
+				"宋体", "宋体", processEngineConfiguration.getClassLoader(), 1);
+		return resource;
+	}
+
+	@Override
+	@Transactional
+	public void complete(String pid) {
+		Task t = task.createTaskQuery().processInstanceId(pid).singleResult();
+		runtime.setVariable(pid, "receiveResult", "approved");
+		runtime.setVariable(pid, "checkResult", "approved");
+		runtime.setVariable(pid, "level", "1");
+		task.complete(t.getId());
 	}
 
 }

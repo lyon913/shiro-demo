@@ -1,5 +1,7 @@
 package com.whr.activiti.service;
 
+import java.io.InputStream;
+
 import com.whr.activiti.model.Apply;
 
 public interface ApplyService {
@@ -7,5 +9,9 @@ public interface ApplyService {
 	
 	public Apply save(Apply apply);
 	
-	public void startProcess();
+	public String startProcess();
+
+	public InputStream getProcessDiagram(String pid);
+	
+	public void complete(String pid);
 }
