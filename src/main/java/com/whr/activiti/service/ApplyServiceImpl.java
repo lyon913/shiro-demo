@@ -3,9 +3,9 @@ package com.whr.activiti.service;
 import java.io.InputStream;
 import java.util.Collections;
 
-import javax.transaction.Transactional;
-
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.whr.activiti.dao.ApplyRepo;
 import com.whr.activiti.model.Apply;
@@ -37,6 +38,12 @@ public class ApplyServiceImpl implements ApplyService {
 
 	@Autowired
 	private RepositoryService repo;
+	
+	@Autowired
+	private HistoryService hist;
+	
+	@Autowired
+	private IdentityService ids;
 
 	@Autowired
 	private ProcessEngineConfiguration processEngineConfiguration;
@@ -56,6 +63,7 @@ public class ApplyServiceImpl implements ApplyService {
 	@Override
 	@Transactional
 	public String startProcess() {
+		ids.setAuthenticatedUserId("1122");
 		ProcessInstance p = runtime.startProcessInstanceByKey("p_register");
 		logger.info("process started:" + p.getProcessInstanceId());
 		
@@ -83,7 +91,7 @@ public class ApplyServiceImpl implements ApplyService {
 		Task t = task.createTaskQuery().processInstanceId(pid).singleResult();
 		runtime.setVariable(pid, "receiveResult", "approved");
 		runtime.setVariable(pid, "checkResult", "approved");
-		runtime.setVariable(pid, "level", "1");
+		runtime.setVariable(pid, "level", "2");
 		task.complete(t.getId());
 	}
 

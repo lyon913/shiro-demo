@@ -15,18 +15,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.whr.activiti.service.ApplyService;
+import com.whr.activiti.service.BpmService;
 
 @Controller
 public class SomeController {
 	@Autowired
 	private ApplyService as;
-
-	@RequestMapping("/test")
-	public String test(){
-		return "/test";
-	}
+	
+	
+	private BpmService bs;
 	
 	@RequestMapping("/start")
+	public String processRepo(Model m){
+
+		return "/processRepo";
+	}
+
+	
+	@RequestMapping("/p/{processKey}/start")
 	public String start(Model m){
 		String pid = as.startProcess();
 		m.addAttribute("pid", pid);
@@ -46,5 +52,11 @@ public class SomeController {
 	public String complete(@PathVariable String pid){
 		as.complete(pid);
 		return "/test";
+	}
+	
+	@RequestMapping("/p/{key}/task/{tid}")
+	public String taskList(@PathVariable String key,@PathVariable String tid){
+		
+		return "/taskList";
 	}
 }
