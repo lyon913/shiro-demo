@@ -8,6 +8,9 @@ public class UserInfo extends IdEntity{
 	private String name;
 	private String password;
 	
+	private String groupName;
+	private String group;
+	
 	public String getLoginName() {
 		return loginName;
 	}
@@ -25,6 +28,18 @@ public class UserInfo extends IdEntity{
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getGroupName() {
+		return groupName;
+	}
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+	public String getGroup() {
+		return group;
+	}
+	public void setGroup(String group) {
+		this.group = group;
 	}
 	
 }

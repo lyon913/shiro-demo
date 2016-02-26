@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
@@ -20,15 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.whr.activiti.dao.ApplyRepo;
-import com.whr.activiti.model.Apply;
-
 @Service
 public class ApplyServiceImpl implements ApplyService {
 	private final Logger logger = LoggerFactory.getLogger(ApplyServiceImpl.class);
-
-	@Autowired
-	private ApplyRepo ar;
 
 	@Autowired
 	private RuntimeService runtime;
@@ -40,25 +33,11 @@ public class ApplyServiceImpl implements ApplyService {
 	private RepositoryService repo;
 	
 	@Autowired
-	private HistoryService hist;
-	
-	@Autowired
 	private IdentityService ids;
 
 	@Autowired
 	private ProcessEngineConfiguration processEngineConfiguration;
 
-	@Override
-	public Apply findById(long id) {
-		return ar.findOne(id);
-
-	}
-
-	@Override
-	@Transactional
-	public Apply save(Apply apply) {
-		return ar.save(apply);
-	}
 
 	@Override
 	@Transactional

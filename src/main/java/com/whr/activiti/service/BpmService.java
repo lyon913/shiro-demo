@@ -1,9 +1,12 @@
 package com.whr.activiti.service;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 
 /**
@@ -17,7 +20,7 @@ public interface BpmService {
 	 * @param processDefKey
 	 * @param userId
 	 */
-	void startProcess(String processDefKey, String userId, String businessKey);
+	String startProcess(String processDefKey, String userId, String businessKey);
 	
 	/**
 	 * 提交流程
@@ -33,11 +36,10 @@ public interface BpmService {
 	
 	/**
 	 * 查找用户当前待处理的任务
-	 * @param processDefKey
 	 * @param userId
 	 * @return
 	 */
-	List<Task> findTasksByUser(String processDefKey, String userId);
+	Map<ProcessInstance,Task> findTasksByUser(String userId);
 	
 	/**
 	 * 查找指定流程实例的历史办理情况
@@ -53,5 +55,18 @@ public interface BpmService {
 	 */
 	List<ProcessDefinition> findProcessDefByGroup(String group);
 	
+	/**
+	 * 通过key查找流程定义
+	 * @param processDefKey
+	 * @return
+	 */
+	ProcessDefinition findProcessDefByKey(String processDefKey);
+	
+	/**
+	 * 生成流程图
+	 * @param pid
+	 * @return
+	 */
+	InputStream generateDiagram(String pid);
 
 }
