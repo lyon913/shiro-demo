@@ -15,13 +15,16 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class BpmServiceImpl implements BpmService {
 
 	@Autowired
@@ -42,6 +45,10 @@ public class BpmServiceImpl implements BpmService {
 	@Transactional
 	@Override
 	public String startProcess(String processDefKey, String userId, String businessKey) {
+		
+		//设置activiti用户信息
+		Authentication.setAuthenticatedUserId(userId);
+		
 		// 启动流程实例,设置业务号（businessKey,唯一）
 		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey,businessKey);
 
@@ -58,7 +65,11 @@ public class BpmServiceImpl implements BpmService {
 
 	@Transactional
 	@Override
-	public void complete(String pid, String targetUserId) {
+	public void complete(String pid, String currentUserId, String targetUserId) {
+		
+		//设置activiti用户信息
+		Authentication.setAuthenticatedUserId(currentUserId);
+		
 		//此处简化处理代码
 		//串行任务可以按下面查询，只会有一条记录；但并行任务可能有多条task，需修改处理方式
 		Task t = ts.createTaskQuery().processInstanceId(pid).active().singleResult();
@@ -82,7 +93,10 @@ public class BpmServiceImpl implements BpmService {
 
 	@Transactional
 	@Override
-	public void back(String taskId, String targetUserId) {
+	public void back(String taskId, String currentUserId, String targetUserId) {
+		//设置activiti用户信息
+		Authentication.setAuthenticatedUserId(currentUserId);
+		
 		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
 
 		// 查找对应task的流程实例id
@@ -97,6 +111,11 @@ public class BpmServiceImpl implements BpmService {
 		// 指定任务所有者
 		ts.claim(task.getId(), targetUserId);
 
+	}
+	
+	@Override
+	public ProcessInstance findProcessInstanceById(String processInstanceId) {
+		return rts.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
 	}
 
 	@Override
@@ -149,5 +168,7 @@ public class BpmServiceImpl implements BpmService {
 		return resource;
 
 	}
+
+
 
 }

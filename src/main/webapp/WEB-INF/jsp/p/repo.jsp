@@ -8,27 +8,27 @@
 <title>Process Started</title>
 </head>
 <body>
-	<p>${pName}已启动</p>
-	<p>业务号：${bKey}</p>
-	<p>实例ID：${pid}</p>
-	<c:url var="_detials" value="/p/${pid }/details" />
-	<p><a href="${_details }">查看详细情况</a></p>
-	
+
 	<table>
 		<tr>
-			<td>流程名称</td>
-			<td>节点名称</td>
-			<td>指派</td>
-			<td>开始时间</td>
+			<td>id</td>
+			<td>key</td>
+			<td>名称</td>
+			<td>描述</td>
+			<td>版本</td>
 			<td>操作</td>
 		</tr>
-		<c:forEach items="${result }" var="r">
+		<c:forEach items="${pdList }" var="pd">
 			<tr>
-				<td>${r.key.name }</td>
-				<td>${r.value.name}</td>
-				<td>${r.value.assignee}</td>
-				<td>开始时间</td>
-				<td>操作</td>
+				<td>${pd.id }</td>
+				<td>${pd.key }</td>
+				<td>${pd.name }</td>
+				<td>${pd.description }</td>
+				<td>${pd.version }</td>
+				<td>
+					<c:url var="_start_url" value="/p/${pd.key}/start"/>
+					<a href="${_start_url }">启动</a>
+				</td>
 			</tr>
 		</c:forEach>
 	</table>

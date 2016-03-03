@@ -26,13 +26,21 @@ public interface BpmService {
 	 * 提交流程
 	 * @param taskId
 	 */
-	void complete(String taskId, String targetUserId);
+	void complete(String pid, String currentUserId, String targetUserId);
 	
 	/**
 	 * 退回流程
 	 * @param taskId
 	 */
-	void back(String taskId, String targetUserId);
+	void back(String taskId, String currentUserId, String targetUserId);
+	
+	
+	/**
+	 * 通过流程实例id查找流程实例
+	 * @param processInstanceId
+	 * @return
+	 */
+	ProcessInstance findProcessInstanceById(String processInstanceId);
 	
 	/**
 	 * 查找用户当前待处理的任务
@@ -68,5 +76,9 @@ public interface BpmService {
 	 * @return
 	 */
 	InputStream generateDiagram(String pid);
+
+	
+
+	
 
 }

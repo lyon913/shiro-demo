@@ -1,21 +1,26 @@
 package com.whr.activiti.service;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.whr.activiti.model.UserInfo;
 
-@Component
-@Scope("session")
-public class SessionManager {
-	private UserInfo loginUser;
 
-	public UserInfo getLoginUser() {
+public class SessionManager {
+
+	public static UserInfo getLoginUser() {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		HttpSession session =attr.getRequest().getSession();
+		UserInfo loginUser = (UserInfo)session.getAttribute("loginUser");
 		return loginUser;
 	}
 
-	public void setLoginUser(UserInfo loginUser) {
-		this.loginUser = loginUser;
+	public static void setLoginUser(UserInfo loginUser) {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		HttpSession session =attr.getRequest().getSession();
+		session.setAttribute("loginUser", loginUser);
 	}
 		
 }

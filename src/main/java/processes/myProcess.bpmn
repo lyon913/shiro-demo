@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20" id="register-definitions">
-  <process id="p_register" name="登记流程" isExecutable="true" activiti:candidateStarterGroups="GROUP_SL">
+  <process id="p_register" name="登记流程" isExecutable="true" activiti:candidateStarterUsers="GROUP_SL">
     <startEvent id="registerStartEvent" name="开始" activiti:initiator="initiator"></startEvent>
     <endEvent id="registerEndEvent" name="结束"></endEvent>
     <userTask id="sl" name="受理" default="sl_to_sh" activiti:candidateGroups="GROUP_SJ"></userTask>
@@ -113,7 +113,7 @@
         <omgdi:waypoint x="1093.0" y="57.0"></omgdi:waypoint>
         <omgdi:waypoint x="1093.0" y="140.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="167.0" y="41.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="167.0" y="41.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="fz_to_sz" id="BPMNEdge_fz_to_sz">

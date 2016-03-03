@@ -9,7 +9,7 @@
 </head>
 <body>
 <div>
-待办流程
+已办流程
 </div>
 	<table>
 		<thead>
@@ -17,22 +17,19 @@
 				<td>流程名称</td>
 				<td>业务号</td>
 				<td>当前节点</td>
-				<td>指派</td>
-				<td>开始时间</td>
-				<td>操作</td>
+				<td>流程创建人</td>
+				<td>流程开始时间</td>
 			<tr>
 		</thead>
 		
 		<c:forEach items="${result }" var="r">
 			<tr>
 				<td>${r.key.name }</td>
-				<td>${r.key.businessKey }</td>
 				<td>${r.value.name}</td>
 				<td>${r.value.assignee}</td>
 				<td>${r.value.createTime}</td>
 				<td>
-					<a>提交</a>
-					<a>退回</a>
+					<a>提交流程</a>
 				</td>
 			</tr>
 		</c:forEach>
