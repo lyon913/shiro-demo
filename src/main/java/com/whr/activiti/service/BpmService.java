@@ -26,7 +26,7 @@ public interface BpmService {
 	 * 提交流程
 	 * @param taskId
 	 */
-	void complete(String pid, String currentUserId, String targetUserId);
+	void complete(String taskId, String currentUserId, String targetUserId);
 	
 	/**
 	 * 退回流程

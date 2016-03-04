@@ -1,5 +1,4 @@
 <%@page import="com.whr.activiti.model.UserInfo"%>
-<%@page import="com.whr.activiti.web.SessionManager"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <ul>

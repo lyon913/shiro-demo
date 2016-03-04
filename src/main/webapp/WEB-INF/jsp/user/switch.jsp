@@ -1,4 +1,3 @@
-<%@page import="com.whr.activiti.web.SessionManager"%>
 <%@page import="com.whr.activiti.model.UserInfo"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -11,8 +10,7 @@
 </head>
 <body>
 <div>
-<%UserInfo u = SessionManager.getLoginUser(); %>
-当前用户：<% if(u!=null){ out.print(u.getLoginName()); } %>
+当前用户：${currentUser.name}-${currentUser.loginName}
 </div>
 	<table>
 		<tr>

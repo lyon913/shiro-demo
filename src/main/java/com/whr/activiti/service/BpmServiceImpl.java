@@ -65,17 +65,17 @@ public class BpmServiceImpl implements BpmService {
 
 	@Transactional
 	@Override
-	public void complete(String pid, String currentUserId, String targetUserId) {
+	public void complete(String taskId, String currentUserId, String targetUserId) {
 		
 		//设置activiti用户信息
 		Authentication.setAuthenticatedUserId(currentUserId);
 		
 		//此处简化处理代码
 		//串行任务可以按下面查询，只会有一条记录；但并行任务可能有多条task，需修改处理方式
-		Task t = ts.createTaskQuery().processInstanceId(pid).active().singleResult();
+		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
 		
 		if(t == null) {
-			throw new ActivitiObjectNotFoundException("未找到活动任务-pid:"+pid);
+			throw new ActivitiObjectNotFoundException("未找到活动任务-taskid:"+taskId);
 		}
 
 		// 查找对应task的流程实例id
@@ -141,8 +141,8 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public List<ProcessDefinition> findProcessDefByGroup(String group) {
-		// 查找group可启动的流程（可以是多个或一个）
-		return rps.createProcessDefinitionQuery().startableByUser(group).list();
+		// 查找group可启动的流程;最新版本（可以是多个或一个）
+		return rps.createProcessDefinitionQuery().startableByUser(group).latestVersion().list();
 	}
 
 	@Override
