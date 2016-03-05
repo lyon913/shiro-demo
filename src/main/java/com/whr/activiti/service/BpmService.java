@@ -78,6 +78,11 @@ public interface BpmService {
 	InputStream generateDiagram(String pid);
 
 	
+	List<String> findNextCandiGroups(String processInstanceId);
+	
+	List<String> findLastCandiGroups(String processInstanceId);
+
+	
 
 	
 

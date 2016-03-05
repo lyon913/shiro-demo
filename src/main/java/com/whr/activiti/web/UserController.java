@@ -1,43 +1,27 @@
 package com.whr.activiti.web;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.whr.activiti.model.UserInfo;
-import com.whr.activiti.service.BpmService;
 import com.whr.activiti.service.SessionManager;
+import com.whr.activiti.service.UserManager;
 
 @Controller
 public class UserController {
 
 	@Autowired
-	private BpmService bs;
+	private UserManager um;
 
 	@RequestMapping(value = "/user/switch", method = RequestMethod.GET)
 	public String initSwitchUser(Model m) {
-		List<UserInfo> users = new ArrayList<UserInfo>();
-		UserInfo u1 = new UserInfo();
-		u1.setId(1l);
-		u1.setLoginName("admin");
-		u1.setName("系统管理员1");
-		u1.setGroup("GROUP_ADMIN");
-		u1.setGroupName("系统管理组");
-		users.add(u1);
-
-		UserInfo u2 = new UserInfo();
-		u2.setId(2l);
-		u2.setLoginName("user1");
-		u2.setName("用户1");
-		u2.setGroup("GROUP_SL");
-		u2.setGroupName("受理用户组");
-		users.add(u2);
-
+		List<UserInfo> users = um.findAll();
 		m.addAttribute("users", users);
 		
 		UserInfo currentUser = SessionManager.getLoginUser();
@@ -61,11 +45,18 @@ public class UserController {
 	}
 
 	/**
-	 * 
+	 * 按组别选择用户
+	 * @param group 用户组
+	 * @param cbk 选择用户后的回掉
+	 * @param m
 	 * @return
 	 */
-	@RequestMapping("/user/list/group/{group}")
-	public String userListByGroup(String group) {
-		return "userSelect";
+	@RequestMapping("/user/selectByGroup/{group}/{cbk}")
+	public String userListByGroup(@PathVariable String group, @PathVariable String cbk, Model m) {
+		List<UserInfo> users = um.findByGroup(group);
+		
+		m.addAttribute("users", users);
+		m.addAttribute("cbk", cbk);
+		return "user/select";
 	}
 }

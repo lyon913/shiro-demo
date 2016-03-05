@@ -29,7 +29,7 @@
 				<td>${u.group}</td>
 				<td>${u.groupName}</td>
 				<td>
-					<a href="###" onclick="switchUser('${u.id}','${u.loginName}','${u.name}','${u.group}','${u.groupName}')">切换</a>
+					<button onclick="switchUser('${u.id}','${u.loginName}','${u.name}','${u.group}','${u.groupName}')">切换</button>
 				</td>
 			</tr>
 		</c:forEach>
@@ -37,6 +37,7 @@
 	</table>
 	<script type="text/javascript">
 		function switchUser(id,loginName,name,group,groupName){
+			
 			var form = document.createElement('form');
 			var url = '<c:url value="/user/switch"/>';
 			
@@ -73,6 +74,7 @@
 			f_groupName.setAttribute('value',groupName);
 			form.appendChild(f_groupName);
 			
+			document.body.appendChild(form);
 			form.submit();
 		}
 	</script>

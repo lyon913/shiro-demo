@@ -7,6 +7,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Process Started</title>
+
+<link rel="stylesheet" type="text/css" href="${_ctx }resources/js/bootstrap-3.3.6-dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="${_ctx }resources/js/bootstrap-3.3.6-dist/css/bootstrap-theme.min.css"/>
+<script type="text/javascript" src="${_ctx }resources/js/jquery-2.2.1.min.js"></script>
+<script type="text/javascript" src="${_ctx }resources/js/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -31,8 +36,7 @@
 					<td><fmt:formatDate value="${r.value.createTime}"
 							pattern="yyyy年MM月dd日  HH时mm分" /></td>
 					<td>
-						<c:url var="_complete" value="/p/task/${r.value.id }/complete"/>
-						<a href="${_complete }">提交</a>
+						<a href="###" onclick="">提交</a>
 						<c:url var="_back" value="/p/task/${r.value.id }/back"/>
 						<a>退回</a>
 						<a>详细</a>
@@ -41,6 +45,31 @@
 			</c:forEach>
 		</tbody>
 	</table>
+	<div id="selectUserDialog"></div>
 
+<script type="text/javascript">
+
+function complete(){
+	showUserSelectDialog()
+}
+
+function showUserSelectDialog(group,cbk){
+	$.ajax({
+		url:'${_ctx}user/selectByGroup/'+group+'/'+cbk,
+		type:'GET',
+		success:function(data){
+			$('#selectUserDialog').html(data);
+			$('#selectUserDialog').modal({
+				
+			});
+		}
+		
+	})
+}
+
+function userSelected(user){
+	console.log(user);
+}
+</script>
 </body>
 </html>

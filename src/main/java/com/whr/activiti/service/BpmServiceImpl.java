@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngineConfiguration;
@@ -45,19 +47,19 @@ public class BpmServiceImpl implements BpmService {
 	@Transactional
 	@Override
 	public String startProcess(String processDefKey, String userId, String businessKey) {
-		
-		//设置activiti用户信息
+
+		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(userId);
-		
+
 		// 启动流程实例,设置业务号（businessKey,唯一）
-		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey,businessKey);
+		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey);
 
 		// 查找流程当前的任务节点
 		Task task = ts.createTaskQuery().processInstanceId(instance.getId()).singleResult();
 
 		// 指定任务所有者
 		ts.claim(task.getId(), userId);
-		
+
 		// 返回实例id
 		return instance.getId();
 
@@ -66,16 +68,16 @@ public class BpmServiceImpl implements BpmService {
 	@Transactional
 	@Override
 	public void complete(String taskId, String currentUserId, String targetUserId) {
-		
-		//设置activiti用户信息
+
+		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(currentUserId);
-		
-		//此处简化处理代码
-		//串行任务可以按下面查询，只会有一条记录；但并行任务可能有多条task，需修改处理方式
+
+		// 此处简化处理代码
+		// 串行任务可以按下面查询，只会有一条记录；但并行任务可能有多条task，需修改处理方式
 		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
-		
-		if(t == null) {
-			throw new ActivitiObjectNotFoundException("未找到活动任务-taskid:"+taskId);
+
+		if (t == null) {
+			throw new ActivitiObjectNotFoundException("未找到活动任务-taskid:" + taskId);
 		}
 
 		// 查找对应task的流程实例id
@@ -94,9 +96,9 @@ public class BpmServiceImpl implements BpmService {
 	@Transactional
 	@Override
 	public void back(String taskId, String currentUserId, String targetUserId) {
-		//设置activiti用户信息
+		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(currentUserId);
-		
+
 		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
 
 		// 查找对应task的流程实例id
@@ -112,20 +114,21 @@ public class BpmServiceImpl implements BpmService {
 		ts.claim(task.getId(), targetUserId);
 
 	}
-	
+
 	@Override
 	public ProcessInstance findProcessInstanceById(String processInstanceId) {
 		return rts.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
 	}
 
 	@Override
-	public Map<ProcessInstance,Task> findTasksByUser(String userId) {
-		Map<ProcessInstance,Task> result = new HashMap<ProcessInstance,Task>();
+	public Map<ProcessInstance, Task> findTasksByUser(String userId) {
+		Map<ProcessInstance, Task> result = new HashMap<ProcessInstance, Task>();
 		// 指定流程和用户查询task
 		List<Task> tasks = ts.createTaskQuery().taskAssignee(userId).list();
-		if(tasks != null && tasks.size() > 0) {
-			for(Task t : tasks) {
-				ProcessInstance pi = rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).singleResult();
+		if (tasks != null && tasks.size() > 0) {
+			for (Task t : tasks) {
+				ProcessInstance pi = rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId())
+						.singleResult();
 				result.put(pi, t);
 			}
 		}
@@ -153,22 +156,55 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public InputStream generateDiagram(String pid) {
-		
+
 		HistoricProcessInstance hInst = hs.createHistoricProcessInstanceQuery().processInstanceId(pid).singleResult();
-		
-		if(hInst == null) {
-			throw new ActivitiObjectNotFoundException("流程实例未找到："+pid);
+
+		if (hInst == null) {
+			throw new ActivitiObjectNotFoundException("流程实例未找到：" + pid);
 		}
 		BpmnModel bpmnModel = rps.getBpmnModel(hInst.getProcessDefinitionId());
-		
+
 		ProcessDiagramGenerator dg = processEngineConfiguration.getProcessDiagramGenerator();
-		InputStream resource = dg.generateDiagram(bpmnModel, "png",
-				rts.getActiveActivityIds(hInst.getId()), Collections.<String> emptyList(),
-				"宋体", "宋体", processEngineConfiguration.getClassLoader(), 1);
+		InputStream resource = dg.generateDiagram(bpmnModel, "png", rts.getActiveActivityIds(hInst.getId()),
+				Collections.<String> emptyList(), "宋体", "宋体", processEngineConfiguration.getClassLoader(), 1);
 		return resource;
 
 	}
 
+	@Override
+	public List<String> findNextCandiGroups(String taskId) {
 
+		
+		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
+		
+		BpmnModel m = rps.getBpmnModel(t.getProcessInstanceId());
+		
+		List<UserTask> allTasks = m.getMainProcess().findFlowElementsOfType(UserTask.class);
+		UserTask current = null;
+		UserTask next = null;
+		for(int i=0;i<allTasks.size();i++) {
+			UserTask tmp = allTasks.get(i);
+			if(t.getTaskDefinitionKey().equals(tmp.getId())) {
+				current = tmp;
+				int n = i+1;
+				if(n<allTasks.size()) {
+					next = allTasks.get(n);
+				}
+			}
+		}
+		
+		if(next != null) {
+			return next.getCandidateGroups();
+		}
+
+		return null;
+
+	}
+
+	@Override
+	public List<String> findLastCandiGroups(String processInstanceId) {
+		return null;
+
+	}
 
 }

@@ -1,14 +1,22 @@
 package com.whr.activiti.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
 public class UserInfo extends IdEntity{
 	private String loginName;
+	
+	@Column(name="fName")
 	private String name;
+	
+	@Column(name="fPassword")
 	private String password;
 	
+	@Column(name="fGroupName")
 	private String groupName;
+	
+	@Column(name="fGroup")
 	private String group;
 	
 	public String getLoginName() {

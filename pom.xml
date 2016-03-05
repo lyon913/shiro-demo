@@ -7,30 +7,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>shiro-demo Maven Webapp</name>
 	<url>http://maven.apache.org</url>
-<repositories>
-	<repository>
-		<id>nexus</id>
-		<url>http://192.168.0.238:8081/nexus/content/groups/public/</url>
-		<releases>
-			<enabled>true</enabled>
-		</releases>
-		<snapshots> 
-			<enabled>true</enabled>
-		</snapshots>
-	</repository>
-</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>nexus</id>
-			<url>http://192.168.0.238:8081/nexus/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -79,23 +56,13 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-all</artifactId>
-			<version>1.2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>2.2.1</version>
-		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>io.spring.platform</groupId>
 				<artifactId>platform-bom</artifactId>
-				<version>2.0.1.RELEASE</version>
+				<version>2.0.2.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
