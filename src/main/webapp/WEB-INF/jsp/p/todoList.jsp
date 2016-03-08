@@ -33,13 +33,12 @@
 					<td>${r.key.businessKey }</td>
 					<td>${r.value.name}</td>
 					<td>${r.value.assignee}</td>
-					<td><fmt:formatDate value="${r.value.createTime}"
-							pattern="yyyy年MM月dd日  HH时mm分" /></td>
 					<td>
-						<a href="###" onclick="">提交</a>
-						<c:url var="_back" value="/p/task/${r.value.id }/back"/>
-						<a>退回</a>
-						<a>详细</a>
+						<fmt:formatDate value="${r.value.createTime}" pattern="yyyy年MM月dd日  HH时mm分" />
+					</td>
+					<td>
+						<c:url var="_details" value="/p/task/${r.value.id }/details"/>
+						<a href="${_details }">办理</a>
 					</td>
 				</tr>
 			</c:forEach>
@@ -64,7 +63,7 @@ function showUserSelectDialog(group,cbk){
 			});
 		}
 		
-	})
+	});
 }
 
 function userSelected(user){

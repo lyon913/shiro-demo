@@ -1,13 +1,18 @@
 package com.whr.activiti.service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.Process;
+import org.activiti.bpmn.model.SequenceFlow;
+import org.activiti.bpmn.model.StartEvent;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.HistoryService;
@@ -55,10 +60,10 @@ public class BpmServiceImpl implements BpmService {
 		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey);
 
 		// 查找流程当前的任务节点
-		Task task = ts.createTaskQuery().processInstanceId(instance.getId()).singleResult();
+		//Task task = ts.createTaskQuery().processInstanceId(instance.getId()).singleResult();
 
 		// 指定任务所有者
-		ts.claim(task.getId(), userId);
+		//ts.claim(task.getId(), userId);
 
 		// 返回实例id
 		return instance.getId();
@@ -87,10 +92,12 @@ public class BpmServiceImpl implements BpmService {
 		rts.setVariable(processInstId, "direction", "forward");
 		ts.complete(t.getId());
 
-		// 查找流程当前的任务节点
-		Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
-		// 指定任务所有者
-		ts.claim(task.getId(), targetUserId);
+		if(targetUserId != null) {
+			// 查找流程当前的任务节点
+			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
+			// 指定任务所有者
+			ts.claim(task.getId(), targetUserId);
+		}
 	}
 
 	@Transactional
@@ -108,10 +115,12 @@ public class BpmServiceImpl implements BpmService {
 		rts.setVariable(processInstId, "direction", "backward");
 		ts.complete(taskId);
 
-		// 查找流程当前的任务节点
-		Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
-		// 指定任务所有者
-		ts.claim(task.getId(), targetUserId);
+		if(targetUserId != null) {
+			// 查找流程当前的任务节点
+			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
+			// 指定任务所有者
+			ts.claim(task.getId(), targetUserId);
+		}
 
 	}
 
@@ -174,30 +183,54 @@ public class BpmServiceImpl implements BpmService {
 	@Override
 	public List<String> findNextCandiGroups(String taskId) {
 
-		
 		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
-		
-		BpmnModel m = rps.getBpmnModel(t.getProcessInstanceId());
-		
-		List<UserTask> allTasks = m.getMainProcess().findFlowElementsOfType(UserTask.class);
-		UserTask current = null;
-		UserTask next = null;
-		for(int i=0;i<allTasks.size();i++) {
-			UserTask tmp = allTasks.get(i);
-			if(t.getTaskDefinitionKey().equals(tmp.getId())) {
-				current = tmp;
-				int n = i+1;
-				if(n<allTasks.size()) {
-					next = allTasks.get(n);
-				}
-			}
-		}
-		
-		if(next != null) {
-			return next.getCandidateGroups();
+		if (t == null) {
+			throw new ActivitiObjectNotFoundException("任务未找到--task id:" + taskId);
 		}
 
-		return null;
+		BpmnModel m = rps.getBpmnModel(t.getProcessInstanceId());
+		
+		//主流程
+		Process mp = m.getMainProcess();
+		// 查找流程定义中的所有UserTask
+		List<UserTask> uts = mp.findFlowElementsOfType(UserTask.class);
+
+		if (uts == null || uts.size() < 1) {
+			throw new ActivitiObjectNotFoundException("流程定义错误(流程"+mp.getId()+"中未找到UserTask)");
+		}
+
+		UserTask currentTask = null;// 当前用户任务
+		Integer currentTaskIndex = null;// 当前用户任务的index（即id的数值大小）
+
+		for (UserTask ut : uts) {
+			// 遍历查找当前的UserTask
+			if (t.getTaskDefinitionKey().equals(ut.getId())) {
+				currentTask = ut;
+				currentTaskIndex = Integer.parseInt(ut.getId());
+			}
+		}
+
+		if (currentTask == null) {
+			throw new ActivitiObjectNotFoundException("未找到Task定义");
+		}
+
+		// 获得当前UserTask的所有出口定义
+		List<SequenceFlow> outFlows = currentTask.getOutgoingFlows();
+		if (outFlows == null || outFlows.size() < 1) {
+			throw new ActivitiObjectNotFoundException("流程定义错误:节点" + currentTask.getName() + "没有出口");
+		}
+		//遍历出口，寻找前进方向（index比当前节点大的节点）
+		List<UserTask> nextNodes = findNext(outFlows,currentTaskIndex);
+		if(nextNodes == null) {
+			//流程无下一个usertask，通常情况是下一节点为流程结束事件
+			return null;
+		}
+		
+		if(nextNodes.size() > 1) {
+			throw new RuntimeException("暂不支持多个出口节点");
+		}
+		
+		return nextNodes.get(0).getCandidateGroups();
 
 	}
 
@@ -205,6 +238,58 @@ public class BpmServiceImpl implements BpmService {
 	public List<String> findLastCandiGroups(String processInstanceId) {
 		return null;
 
+	}
+	
+	private List<UserTask> findNext(List<SequenceFlow> flows, int currentIndex){
+		List<UserTask> result = new ArrayList<UserTask>();
+		for(SequenceFlow sf : flows) {
+			
+			//获取sequenceflow的目标节点
+			FlowElement target = sf.getTargetFlowElement();
+			if(target instanceof UserTask) {
+				String taskDefKey = ((UserTask)target).getId();
+				int nextIndex = Integer.parseInt(taskDefKey);
+				
+				//目标节点index大于当前index则判断为前进方向
+				if(nextIndex > currentIndex) {
+					result.add((UserTask)target);
+				}
+			}else if(target instanceof StartEvent){
+				//流程开始事件
+			}else if(target instanceof EndEvent){
+				//流程结束事件
+			}else {
+				//其他节点暂时未考虑。如需处理gateway在此增加递归调用
+			}
+		}
+		
+		return result;
+	}
+	
+	private List<UserTask> findLast(List<SequenceFlow> flows, int currentIndex){
+		List<UserTask> result = new ArrayList<UserTask>();
+		for(SequenceFlow sf : flows) {
+			
+			//获取sequenceflow的目标节点
+			FlowElement target = sf.getTargetFlowElement();
+			if(target instanceof UserTask) {
+				String taskDefKey = ((UserTask)target).getId();
+				int nextIndex = Integer.parseInt(taskDefKey);
+				
+				//目标节点index大于当前index则判断为前进方向
+				if(nextIndex < currentIndex) {
+					result.add((UserTask)target);
+				}
+			}else if(target instanceof StartEvent){
+				//流程开始事件
+			}else if(target instanceof EndEvent){
+				//流程结束事件
+			}else {
+				//其他节点暂时未考虑。如需处理gateway在此增加递归调用
+			}
+		}
+		
+		return result;
 	}
 
 }

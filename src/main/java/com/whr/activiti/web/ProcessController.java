@@ -111,8 +111,6 @@ public class ProcessController {
 			Map<ProcessInstance, Task> result = bs.findTasksByUser(currentUser.getLoginName());
 			m.addAttribute("result", result);
 		}
-		
-		
 		return "/p/todoList";
 	}
 }
