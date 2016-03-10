@@ -1,133 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20" id="register-definitions">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test" id="register-definitions">
   <process id="p_register" name="登记流程" isExecutable="true" activiti:candidateStarterUsers="GROUP_SL">
     <documentation>不动产通用登记流程</documentation>
     <startEvent id="start" name="开始" activiti:initiator="initiator"></startEvent>
     <endEvent id="end" name="结束"></endEvent>
-    <userTask id="10" name="受理" default="10_20" activiti:assignee="${initiator}" activiti:candidateGroups="GROUP_SJ"></userTask>
-    <userTask id="20" name="审核" default="20_30" activiti:candidateGroups="GROUP_SH"></userTask>
-    <sequenceFlow id="flow3" sourceRef="start" targetRef="10"></sequenceFlow>
-    <userTask id="40" name="缮证" default="40_50" activiti:candidateGroups="GROUP_SZ"></userTask>
-    <userTask id="50" name="发证" default="50_60" activiti:candidateGroups="GROUP_FZ"></userTask>
-    <sequenceFlow id="40_50" sourceRef="40" targetRef="50"></sequenceFlow>
-    <userTask id="60" name="归档" default="60_end" activiti:candidateGroups="GROUP_GD"></userTask>
-    <sequenceFlow id="50_60" sourceRef="50" targetRef="60"></sequenceFlow>
-    <sequenceFlow id="60_end" sourceRef="60" targetRef="end"></sequenceFlow>
-    <sequenceFlow id="20_10" sourceRef="20" targetRef="10">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${direction=="backward"}]]></conditionExpression>
+    <userTask id="sl" name="受理" activiti:assignee="${initiator}" activiti:candidateGroups="GROUP_SL" activiti:category="SL"></userTask>
+    <userTask id="sh" name="审核" activiti:candidateGroups="GROUP_SH" activiti:category="SH"></userTask>
+    <sequenceFlow id="start_sl" sourceRef="start" targetRef="sl"></sequenceFlow>
+    <userTask id="sz" name="缮证" activiti:candidateGroups="GROUP_SZ" activiti:category="SZ"></userTask>
+    <userTask id="fz" name="发证" activiti:candidateGroups="GROUP_FZ" activiti:category="FZ"></userTask>
+    <sequenceFlow id="sz_fz" sourceRef="sz" targetRef="fz">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="fz"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="10_20" sourceRef="10" targetRef="20"></sequenceFlow>
-    <sequenceFlow id="10_end" name="不予受理/退件" sourceRef="10" targetRef="end">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${rejected==true}]]></conditionExpression>
+    <userTask id="gd" name="归档" activiti:candidateGroups="GROUP_GD" activiti:category="GD"></userTask>
+    <sequenceFlow id="fz_gd" sourceRef="fz" targetRef="gd">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="gd"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="50_40" sourceRef="50" targetRef="40">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${direction=="backward"}]]></conditionExpression>
+    <sequenceFlow id="gd_end" sourceRef="gd" targetRef="end">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="end"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="60_50" sourceRef="60" targetRef="50">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${direction=="backward"}]]></conditionExpression>
+    <sequenceFlow id="sh_sl" sourceRef="sh" targetRef="sl">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="sl"}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="30" name="登簿" default="30_40"></userTask>
-    <sequenceFlow id="30_40" sourceRef="30" targetRef="40"></sequenceFlow>
-    <sequenceFlow id="20_30" sourceRef="20" targetRef="30"></sequenceFlow>
-    <sequenceFlow id="40_30" sourceRef="40" targetRef="30">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${direction=="backward"}]]></conditionExpression>
+    <sequenceFlow id="sl_sh" sourceRef="sl" targetRef="sh">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="sh"}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="30_20" sourceRef="30" targetRef="20">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${direction=="backward"}]]></conditionExpression>
+    <sequenceFlow id="fz_sz" sourceRef="fz" targetRef="sz">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="sz"}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="gd_fz" sourceRef="gd" targetRef="fz">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="gd"}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="db" name="登簿" activiti:candidateGroups="GROUP_DB" activiti:category="DB"></userTask>
+    <sequenceFlow id="db_sz" sourceRef="db" targetRef="sz">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="sz"}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sh_db" sourceRef="sh" targetRef="db">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="db"}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sz_db" sourceRef="sz" targetRef="db">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="db"}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="db_sh" sourceRef="db" targetRef="sh">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="sh"}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="tj" name="退件/不予受理" activiti:candidateGroups="GROUP_SL" activiti:category="TJ"></userTask>
+    <sequenceFlow id="sl_tj" sourceRef="sl" targetRef="tj">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="tj"}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="tj_end" sourceRef="tj" targetRef="end">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${wf_direction=="end"}]]></conditionExpression>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_p_register">
     <bpmndi:BPMNPlane bpmnElement="p_register" id="BPMNPlane_p_register">
       <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
-        <omgdc:Bounds height="35.0" width="35.0" x="36.0" y="140.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="20.0" y="140.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
         <omgdc:Bounds height="35.0" width="35.0" x="1076.0" y="140.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="10" id="BPMNShape_10">
+      <bpmndi:BPMNShape bpmnElement="sl" id="BPMNShape_sl">
         <omgdc:Bounds height="55.0" width="105.0" x="100.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="20" id="BPMNShape_20">
+      <bpmndi:BPMNShape bpmnElement="sh" id="BPMNShape_sh">
         <omgdc:Bounds height="55.0" width="105.0" x="266.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="40" id="BPMNShape_40">
+      <bpmndi:BPMNShape bpmnElement="sz" id="BPMNShape_sz">
         <omgdc:Bounds height="55.0" width="105.0" x="576.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="50" id="BPMNShape_50">
+      <bpmndi:BPMNShape bpmnElement="fz" id="BPMNShape_fz">
         <omgdc:Bounds height="55.0" width="105.0" x="746.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="60" id="BPMNShape_60">
+      <bpmndi:BPMNShape bpmnElement="gd" id="BPMNShape_gd">
         <omgdc:Bounds height="55.0" width="105.0" x="906.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="30" id="BPMNShape_30">
+      <bpmndi:BPMNShape bpmnElement="db" id="BPMNShape_db">
         <omgdc:Bounds height="55.0" width="105.0" x="420.0" y="130.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
-        <omgdi:waypoint x="71.0" y="157.0"></omgdi:waypoint>
+      <bpmndi:BPMNShape bpmnElement="tj" id="BPMNShape_tj">
+        <omgdc:Bounds height="55.0" width="105.0" x="190.0" y="30.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="start_sl" id="BPMNEdge_start_sl">
+        <omgdi:waypoint x="55.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="100.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="40_50" id="BPMNEdge_40_50">
+      <bpmndi:BPMNEdge bpmnElement="sz_fz" id="BPMNEdge_sz_fz">
         <omgdi:waypoint x="681.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="746.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="50_60" id="BPMNEdge_50_60">
+      <bpmndi:BPMNEdge bpmnElement="fz_gd" id="BPMNEdge_fz_gd">
         <omgdi:waypoint x="851.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="906.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="60_end" id="BPMNEdge_60_end">
+      <bpmndi:BPMNEdge bpmnElement="gd_end" id="BPMNEdge_gd_end">
         <omgdi:waypoint x="1011.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="1076.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="20_10" id="BPMNEdge_20_10">
+      <bpmndi:BPMNEdge bpmnElement="sh_sl" id="BPMNEdge_sh_sl">
         <omgdi:waypoint x="318.0" y="185.0"></omgdi:waypoint>
         <omgdi:waypoint x="309.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="152.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="152.0" y="185.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="10_20" id="BPMNEdge_10_20">
+      <bpmndi:BPMNEdge bpmnElement="sl_sh" id="BPMNEdge_sl_sh">
         <omgdi:waypoint x="205.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="266.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="10_end" id="BPMNEdge_10_end">
-        <omgdi:waypoint x="152.0" y="130.0"></omgdi:waypoint>
-        <omgdi:waypoint x="152.0" y="57.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1093.0" y="57.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1093.0" y="140.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="75.0" x="181.0" y="41.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="50_40" id="BPMNEdge_50_40">
+      <bpmndi:BPMNEdge bpmnElement="fz_sz" id="BPMNEdge_fz_sz">
         <omgdi:waypoint x="798.0" y="185.0"></omgdi:waypoint>
         <omgdi:waypoint x="791.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="628.0" y="227.0"></omgdi:waypoint>
         <omgdi:waypoint x="628.0" y="185.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="60_50" id="BPMNEdge_60_50">
+      <bpmndi:BPMNEdge bpmnElement="gd_fz" id="BPMNEdge_gd_fz">
         <omgdi:waypoint x="958.0" y="185.0"></omgdi:waypoint>
         <omgdi:waypoint x="958.0" y="226.0"></omgdi:waypoint>
         <omgdi:waypoint x="799.0" y="226.0"></omgdi:waypoint>
         <omgdi:waypoint x="798.0" y="185.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="30_40" id="BPMNEdge_30_40">
+      <bpmndi:BPMNEdge bpmnElement="db_sz" id="BPMNEdge_db_sz">
         <omgdi:waypoint x="525.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="576.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="20_30" id="BPMNEdge_20_30">
+      <bpmndi:BPMNEdge bpmnElement="sh_db" id="BPMNEdge_sh_db">
         <omgdi:waypoint x="371.0" y="157.0"></omgdi:waypoint>
         <omgdi:waypoint x="420.0" y="157.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="40_30" id="BPMNEdge_40_30">
+      <bpmndi:BPMNEdge bpmnElement="sz_db" id="BPMNEdge_sz_db">
         <omgdi:waypoint x="628.0" y="185.0"></omgdi:waypoint>
         <omgdi:waypoint x="620.0" y="228.0"></omgdi:waypoint>
         <omgdi:waypoint x="476.0" y="228.0"></omgdi:waypoint>
         <omgdi:waypoint x="472.0" y="185.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="30_20" id="BPMNEdge_30_20">
+      <bpmndi:BPMNEdge bpmnElement="db_sh" id="BPMNEdge_db_sh">
         <omgdi:waypoint x="472.0" y="185.0"></omgdi:waypoint>
         <omgdi:waypoint x="464.0" y="228.0"></omgdi:waypoint>
         <omgdi:waypoint x="318.0" y="228.0"></omgdi:waypoint>
         <omgdi:waypoint x="318.0" y="185.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sl_tj" id="BPMNEdge_sl_tj">
+        <omgdi:waypoint x="152.0" y="130.0"></omgdi:waypoint>
+        <omgdi:waypoint x="152.0" y="58.0"></omgdi:waypoint>
+        <omgdi:waypoint x="190.0" y="57.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="tj_end" id="BPMNEdge_tj_end">
+        <omgdi:waypoint x="295.0" y="57.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1093.0" y="57.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1093.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

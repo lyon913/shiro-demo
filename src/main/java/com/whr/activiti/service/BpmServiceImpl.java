@@ -3,13 +3,14 @@ package com.whr.activiti.service;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.Process;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.bpmn.model.StartEvent;
@@ -30,6 +31,9 @@ import org.activiti.image.ProcessDiagramGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.whr.activiti.model.UserInfo;
 
 @Service
 public class BpmServiceImpl implements BpmService {
@@ -49,21 +53,26 @@ public class BpmServiceImpl implements BpmService {
 	@Autowired
 	private HistoryService hs;
 
+	@Autowired
+	private UserManager um;
+	
+	
 	@Transactional
 	@Override
-	public String startProcess(String processDefKey, String userId, String businessKey) {
+	public String startProcess(String processDefKey, String userId, String businessKey,Map<String,Object> variables) {
 
 		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(userId);
 
 		// 启动流程实例,设置业务号（businessKey,唯一）
-		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey);
+		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey,variables);
 
 		// 查找流程当前的任务节点
-		//Task task = ts.createTaskQuery().processInstanceId(instance.getId()).singleResult();
+		// Task task =
+		// ts.createTaskQuery().processInstanceId(instance.getId()).singleResult();
 
 		// 指定任务所有者
-		//ts.claim(task.getId(), userId);
+		// ts.claim(task.getId(), userId);
 
 		// 返回实例id
 		return instance.getId();
@@ -72,7 +81,7 @@ public class BpmServiceImpl implements BpmService {
 
 	@Transactional
 	@Override
-	public void complete(String taskId, String currentUserId, String targetUserId) {
+	public void complete(String taskId, String currentUserId, String targetUserId, String wf_direction) {
 
 		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(currentUserId);
@@ -88,41 +97,42 @@ public class BpmServiceImpl implements BpmService {
 		// 查找对应task的流程实例id
 		String processInstId = t.getProcessInstanceId();
 
-		// 设定流程提交方向变量（前进：forward；退回：backward）
-		rts.setVariable(processInstId, "direction", "forward");
+		// 设定流程提交方向变量(设定为目标节点id)
+		rts.setVariable(processInstId, "wf_direction", wf_direction);
 		ts.complete(t.getId());
 
-		if(targetUserId != null) {
+		if (!StringUtils.isEmpty(targetUserId)) {
 			// 查找流程当前的任务节点
 			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
 			// 指定任务所有者
 			ts.claim(task.getId(), targetUserId);
+			throw new RuntimeException("test");
 		}
 	}
 
-	@Transactional
-	@Override
-	public void back(String taskId, String currentUserId, String targetUserId) {
-		// 设置activiti用户信息
-		Authentication.setAuthenticatedUserId(currentUserId);
-
-		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
-
-		// 查找对应task的流程实例id
-		String processInstId = t.getProcessInstanceId();
-
-		// 设定流程提交方向变量（前进：forward；退回：backward）
-		rts.setVariable(processInstId, "direction", "backward");
-		ts.complete(taskId);
-
-		if(targetUserId != null) {
-			// 查找流程当前的任务节点
-			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
-			// 指定任务所有者
-			ts.claim(task.getId(), targetUserId);
-		}
-
-	}
+//	@Transactional
+//	@Override
+//	public void back(String taskId, String currentUserId, String targetUserId) {
+//		// 设置activiti用户信息
+//		Authentication.setAuthenticatedUserId(currentUserId);
+//
+//		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
+//
+//		// 查找对应task的流程实例id
+//		String processInstId = t.getProcessInstanceId();
+//
+//		// 设定流程提交方向变量（前进：forward；退回：backward）
+//		rts.setVariable(processInstId, "direction", "backward");
+//		ts.complete(taskId);
+//
+//		if (targetUserId != null) {
+//			// 查找流程当前的任务节点
+//			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
+//			// 指定任务所有者
+//			ts.claim(task.getId(), targetUserId);
+//		}
+//
+//	}
 
 	@Override
 	public ProcessInstance findProcessInstanceById(String processInstanceId) {
@@ -131,12 +141,13 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public Map<ProcessInstance, Task> findTasksByUser(String userId) {
-		Map<ProcessInstance, Task> result = new HashMap<ProcessInstance, Task>();
+		Map<ProcessInstance, Task> result = new LinkedHashMap<ProcessInstance, Task>();
 		// 指定流程和用户查询task
-		List<Task> tasks = ts.createTaskQuery().taskAssignee(userId).list();
+		List<Task> tasks = ts.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
 		if (tasks != null && tasks.size() > 0) {
 			for (Task t : tasks) {
-				ProcessInstance pi = rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId())
+				ProcessInstance pi = rts.createProcessInstanceQuery()
+						.processInstanceId(t.getProcessInstanceId())
 						.singleResult();
 				result.put(pi, t);
 			}
@@ -153,7 +164,7 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public List<ProcessDefinition> findProcessDefByGroup(String group) {
-		// 查找group可启动的流程;最新版本（可以是多个或一个）
+		// 查找group可启动的流程（可以是多个或一个）;需要加上latestVersion条件，否则会查询出历史版本
 		return rps.createProcessDefinitionQuery().startableByUser(group).latestVersion().list();
 	}
 
@@ -163,6 +174,9 @@ public class BpmServiceImpl implements BpmService {
 		return rps.createProcessDefinitionQuery().processDefinitionKey(processDefKey).singleResult();
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public InputStream generateDiagram(String pid) {
 
@@ -181,114 +195,108 @@ public class BpmServiceImpl implements BpmService {
 	}
 
 	@Override
-	public List<String> findNextCandiGroups(String taskId) {
+	public List<FlowNode> findOutNodes(String taskId) {
 
+		UserTask currentTask = getUserTaskDefById(taskId);
+
+		List<FlowNode> outNodes = findUserTaskOutNodes(currentTask);
+		
+		return outNodes;
+
+	}
+
+	/**
+	 * 通过UsrTask实例id查找其定义
+	 * @param taskId
+	 * @return
+	 */
+	private UserTask getUserTaskDefById(String taskId) {
 		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
 		if (t == null) {
 			throw new ActivitiObjectNotFoundException("任务未找到--task id:" + taskId);
 		}
-
-		BpmnModel m = rps.getBpmnModel(t.getProcessInstanceId());
 		
-		//主流程
+		
+		BpmnModel m = rps.getBpmnModel(t.getProcessDefinitionId());
+
+		// 主流程
 		Process mp = m.getMainProcess();
 		// 查找流程定义中的所有UserTask
 		List<UserTask> uts = mp.findFlowElementsOfType(UserTask.class);
 
 		if (uts == null || uts.size() < 1) {
-			throw new ActivitiObjectNotFoundException("流程定义错误(流程"+mp.getId()+"中未找到UserTask)");
+			throw new ActivitiObjectNotFoundException("流程定义错误(流程" + mp.getId() + "中未找到UserTask)");
 		}
 
-		UserTask currentTask = null;// 当前用户任务
-		Integer currentTaskIndex = null;// 当前用户任务的index（即id的数值大小）
+		UserTask taskDef = null;// 查找的目标任务
 
 		for (UserTask ut : uts) {
-			// 遍历查找当前的UserTask
+			// 遍历查找指定UserTask
 			if (t.getTaskDefinitionKey().equals(ut.getId())) {
-				currentTask = ut;
-				currentTaskIndex = Integer.parseInt(ut.getId());
+				taskDef = ut;
 			}
 		}
 
-		if (currentTask == null) {
-			throw new ActivitiObjectNotFoundException("未找到Task定义");
-		}
+		return taskDef;
+
+	}
+
+	private List<FlowNode> findUserTaskOutNodes(UserTask userTask) {
 
 		// 获得当前UserTask的所有出口定义
-		List<SequenceFlow> outFlows = currentTask.getOutgoingFlows();
+		List<SequenceFlow> outFlows = userTask.getOutgoingFlows();
 		if (outFlows == null || outFlows.size() < 1) {
-			throw new ActivitiObjectNotFoundException("流程定义错误:节点" + currentTask.getName() + "没有出口");
-		}
-		//遍历出口，寻找前进方向（index比当前节点大的节点）
-		List<UserTask> nextNodes = findNext(outFlows,currentTaskIndex);
-		if(nextNodes == null) {
-			//流程无下一个usertask，通常情况是下一节点为流程结束事件
-			return null;
+			throw new ActivitiObjectNotFoundException("流程定义错误:节点" + userTask.getName() + "没有出口");
 		}
 		
-		if(nextNodes.size() > 1) {
-			throw new RuntimeException("暂不支持多个出口节点");
-		}
-		
-		return nextNodes.get(0).getCandidateGroups();
+		List<FlowNode> outNodes = new ArrayList<FlowNode>();
+		for (SequenceFlow sf : outFlows) {
 
+			// 获取sequenceflow的目标节点
+			FlowElement target = sf.getTargetFlowElement();
+			if (target instanceof UserTask) {
+				// usertask
+				outNodes.add((UserTask) target);
+			} else if (target instanceof StartEvent) {
+				// 流程开始事件不能作为出口
+			} else if (target instanceof EndEvent) {
+				// 流程结束事件
+				outNodes.add((EndEvent) target);
+			} else {
+				// 其他节点暂时未考虑。如需处理gateway在此增加递归调用
+			}
+		}
+
+		return outNodes;
 	}
 
 	@Override
-	public List<String> findLastCandiGroups(String processInstanceId) {
-		return null;
+	public Task getTaskById(String taskId) {
+		return ts.createTaskQuery().taskId(taskId).singleResult();
+	}
 
+	@Override
+	public ProcessInstance getProcessInstanceByTaskId(String taskId) {
+		Task t = getTaskById(taskId);
+		return rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).singleResult();
 	}
-	
-	private List<UserTask> findNext(List<SequenceFlow> flows, int currentIndex){
-		List<UserTask> result = new ArrayList<UserTask>();
-		for(SequenceFlow sf : flows) {
-			
-			//获取sequenceflow的目标节点
-			FlowElement target = sf.getTargetFlowElement();
-			if(target instanceof UserTask) {
-				String taskDefKey = ((UserTask)target).getId();
-				int nextIndex = Integer.parseInt(taskDefKey);
+
+	@Override
+	public Map<FlowNode, List<UserInfo>> findNodeUsers(String taskId) {
+		List<FlowNode> outs = findOutNodes(taskId);
+		
+		Map<FlowNode, List<UserInfo>> result = new LinkedHashMap<FlowNode, List<UserInfo>>();
+		for(FlowNode outNode : outs){
+			if(outNode instanceof UserTask){
+				UserTask un = (UserTask)outNode;
+				List<UserInfo> users = um.findByGroups(un.getCandidateGroups());
+				result.put(un, users);
+			}else if(outNode instanceof EndEvent){
+				result.put(outNode, null);
+			}else{
 				
-				//目标节点index大于当前index则判断为前进方向
-				if(nextIndex > currentIndex) {
-					result.add((UserTask)target);
-				}
-			}else if(target instanceof StartEvent){
-				//流程开始事件
-			}else if(target instanceof EndEvent){
-				//流程结束事件
-			}else {
-				//其他节点暂时未考虑。如需处理gateway在此增加递归调用
 			}
 		}
-		
-		return result;
-	}
-	
-	private List<UserTask> findLast(List<SequenceFlow> flows, int currentIndex){
-		List<UserTask> result = new ArrayList<UserTask>();
-		for(SequenceFlow sf : flows) {
-			
-			//获取sequenceflow的目标节点
-			FlowElement target = sf.getTargetFlowElement();
-			if(target instanceof UserTask) {
-				String taskDefKey = ((UserTask)target).getId();
-				int nextIndex = Integer.parseInt(taskDefKey);
-				
-				//目标节点index大于当前index则判断为前进方向
-				if(nextIndex < currentIndex) {
-					result.add((UserTask)target);
-				}
-			}else if(target instanceof StartEvent){
-				//流程开始事件
-			}else if(target instanceof EndEvent){
-				//流程结束事件
-			}else {
-				//其他节点暂时未考虑。如需处理gateway在此增加递归调用
-			}
-		}
-		
 		return result;
 	}
 

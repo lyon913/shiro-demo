@@ -22,5 +22,10 @@ public class UserManagerImpl implements UserManager {
 	public List<UserInfo> findByGroup(String group) {
 		return ud.findByGroup(group);
 	}
+	
+	@Override
+	public List<UserInfo> findByGroups(List<String> groups) {
+		return ud.findByGroups(groups);
+	}
 
 }

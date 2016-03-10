@@ -4,10 +4,13 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.bpmn.model.FlowNode;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+
+import com.whr.activiti.model.UserInfo;
 
 /**
  * 
@@ -15,24 +18,28 @@ import org.activiti.engine.task.Task;
  *
  */
 public interface BpmService {
+	Task getTaskById(String taskId);
+	
+	ProcessInstance getProcessInstanceByTaskId(String taskId);
+	
 	/**
 	 * 启动流程，并指定第一个任务的所有者为启动者
 	 * @param processDefKey
 	 * @param userId
 	 */
-	String startProcess(String processDefKey, String userId, String businessKey);
+	String startProcess(String processDefKey, String userId, String businessKey,Map<String,Object> variables);
 	
 	/**
 	 * 提交流程
 	 * @param taskId
 	 */
-	void complete(String taskId, String currentUserId, String targetUserId);
+	void complete(String taskId, String currentUserId, String targetUserId, String wf_direction);
 	
-	/**
-	 * 退回流程
-	 * @param taskId
-	 */
-	void back(String taskId, String currentUserId, String targetUserId);
+//	/**
+//	 * 退回流程
+//	 * @param taskId
+//	 */
+//	void back(String taskId, String currentUserId, String targetUserId);
 	
 	
 	/**
@@ -77,13 +84,19 @@ public interface BpmService {
 	 */
 	InputStream generateDiagram(String pid);
 
+	/**
+	 * 
+	 * @param taskId
+	 * @return
+	 */
+	List<FlowNode> findOutNodes(String taskId);
 	
-	List<String> findNextCandiGroups(String processInstanceId);
-	
-	List<String> findLastCandiGroups(String processInstanceId);
-
-	
-
+	/**
+	 * 
+	 * @param taskId
+	 * @return
+	 */
+	Map<FlowNode,List<UserInfo>> findNodeUsers(String taskId);
 	
 
 }

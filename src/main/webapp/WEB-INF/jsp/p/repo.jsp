@@ -9,7 +9,7 @@
 </head>
 <body>
 
-	<table>
+	<table style="width: 100%" align="center">
 		<tr>
 			<td>id</td>
 			<td>key</td>

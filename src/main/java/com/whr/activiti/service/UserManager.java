@@ -9,5 +9,7 @@ public interface UserManager{
 	List<UserInfo> findAll();
 	
 	List<UserInfo> findByGroup(String group);
+	
+	List<UserInfo> findByGroups(List<String> groups);
 
 }

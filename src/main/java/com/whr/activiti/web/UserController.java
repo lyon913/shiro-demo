@@ -43,20 +43,20 @@ public class UserController {
 
 		return "redirect:/user/switch";
 	}
-
-	/**
-	 * 按组别选择用户
-	 * @param group 用户组
-	 * @param cbk 选择用户后的回掉
-	 * @param m
-	 * @return
-	 */
-	@RequestMapping("/user/selectByGroup/{group}/{cbk}")
-	public String userListByGroup(@PathVariable String group, @PathVariable String cbk, Model m) {
-		List<UserInfo> users = um.findByGroup(group);
-		
-		m.addAttribute("users", users);
-		m.addAttribute("cbk", cbk);
-		return "user/select";
-	}
+//
+//	/**
+//	 * 按组别选择用户
+//	 * @param group 用户组
+//	 * @param cbk 选择用户后的回掉
+//	 * @param m
+//	 * @return
+//	 */
+//	@RequestMapping("/user/selectByGroup/{group}/{cbk}")
+//	public String userListByGroup(@PathVariable String group, @PathVariable String cbk, Model m) {
+//		List<UserInfo> users = um.findByGroup(group);
+//		
+//		m.addAttribute("users", users);
+//		m.addAttribute("cbk", cbk);
+//		return "user/select";
+//	}
 }
