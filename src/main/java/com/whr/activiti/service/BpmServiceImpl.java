@@ -3,7 +3,6 @@ package com.whr.activiti.service;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.whr.activiti.dto.OutAndUsers;
+import com.whr.activiti.dto.ProcessInstanceAndTask;
 import com.whr.activiti.model.UserInfo;
 
 @Service
@@ -124,14 +125,15 @@ public class BpmServiceImpl implements BpmService {
 	}
 
 	@Override
-	public Map<ProcessInstance, Task> findTasksByUser(String userId) {
-		Map<ProcessInstance, Task> result = new LinkedHashMap<ProcessInstance, Task>();
+	public List<ProcessInstanceAndTask> findTasksByUser(String userId) {
+		List<ProcessInstanceAndTask> result = new ArrayList<ProcessInstanceAndTask>();
 		// 指定流程和用户查询task
 		List<Task> tasks = ts.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
 		if (tasks != null && tasks.size() > 0) {
 			for (Task t : tasks) {
 				ProcessInstance pi = rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).includeProcessVariables().singleResult();
-				result.put(pi, t);
+				ProcessInstanceAndTask pat = new ProcessInstanceAndTask(pi, t);
+				result.add(pat);
 			}
 		}
 		return result;
@@ -258,16 +260,19 @@ public class BpmServiceImpl implements BpmService {
 	}
 
 	@Override
-	public Map<FlowNode, List<UserInfo>> findNodeUsers(String taskId) {
+	public List<OutAndUsers> findNodeUsers(String taskId) {
 		List<FlowNode> outs = findOutNodes(taskId);
-		Map<FlowNode, List<UserInfo>> result = new LinkedHashMap<FlowNode, List<UserInfo>>();
+		List<OutAndUsers> result = new ArrayList<OutAndUsers>();
 		for (FlowNode outNode : outs) {
 			if (outNode instanceof UserTask) {
-				UserTask un = (UserTask) outNode;
-				List<UserInfo> users = um.findByGroups(un.getCandidateGroups());
-				result.put(un, users);
+				UserTask t = (UserTask) outNode;
+				List<UserInfo> users = um.findByGroups(t.getCandidateGroups());
+				
+				OutAndUsers ous = new OutAndUsers(t,users);
+				result.add(ous);
 			} else if (outNode instanceof EndEvent) {
-				result.put(outNode, null);
+				OutAndUsers ous = new OutAndUsers(outNode,null);
+				result.add(ous);
 			} else {
 
 			}

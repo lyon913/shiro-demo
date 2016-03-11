@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.bpmn.model.FlowNode;
+import javax.servlet.http.HttpServletResponse;
+
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -15,9 +16,7 @@ import org.activiti.engine.task.Task;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.whr.activiti.dto.OutAndUsers;
+import com.whr.activiti.dto.ProcessInstanceAndTask;
 import com.whr.activiti.model.UserInfo;
 import com.whr.activiti.service.BpmService;
 import com.whr.activiti.service.SessionManager;
@@ -61,12 +63,22 @@ public class ProcessController {
 		return "redirect:/p/todoList";
 	}
 
+	/**
+	 * 实例流程图输出
+	 * @param pid
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping("/p/{pid}/diagram")
-	public ResponseEntity<byte[]> showProgressDiagram(@PathVariable String pid) throws IOException {
+	public void showProgressDiagram(@PathVariable String pid, HttpServletResponse response) throws IOException {
 		InputStream in = bs.generateDiagram(pid);
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.IMAGE_PNG);
-		return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers, HttpStatus.CREATED);
+
+		try {
+			response.setContentType("image/jpeg");
+			IOUtils.copy(in, response.getOutputStream());
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
 	}
 
 	@RequestMapping(value = "/p/task/{tid}/complete", method = RequestMethod.POST)
@@ -88,7 +100,7 @@ public class ProcessController {
 	public String todoList(Model m) {
 		UserInfo currentUser = SessionManager.getLoginUser();
 		if (currentUser != null) {
-			Map<ProcessInstance, Task> result = bs.findTasksByUser(currentUser.getLoginName());
+			List<ProcessInstanceAndTask> result = bs.findTasksByUser(currentUser.getLoginName());
 			m.addAttribute("result", result);
 		}
 		return "/p/todoList";
@@ -106,10 +118,9 @@ public class ProcessController {
 	}
 	
 	@RequestMapping("/p/task/{taskId}/outs/{cbk}")
-	public String outNodes(@PathVariable String taskId, @PathVariable String cbk, Model m) {
-		Map<FlowNode,List<UserInfo>> outs = bs.findNodeUsers(taskId);
-
-		m.addAttribute("outs",outs);
+	public String outNodes(@PathVariable String taskId, @PathVariable String cbk, Model m) throws JsonProcessingException {
+		List<OutAndUsers> ou = bs.findNodeUsers(taskId);
+		m.addAttribute("outs",ou);
 		m.addAttribute("taskId",taskId);
 		m.addAttribute("cbk",cbk);
 		return "/p/outs";

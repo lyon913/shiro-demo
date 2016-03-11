@@ -28,18 +28,18 @@
 		<tbody align="left">
 			<c:forEach items="${result }" var="r">
 				<tr>
-					<td>${r.key.processDefinitionName }</td>
-					<td>${r.key.businessKey }</td>
-					<td>${r.key.processVariables["QLLX"]}</td>
-					<td>${r.key.processVariables["QLR"]}</td>
-					<td>${r.key.processVariables["ZL"]}</td>
-					<td>${r.value.name}</td>
-					<td>${r.value.assignee}</td>
+					<td>${r.processInstance.processDefinitionName }</td>
+					<td>${r.processInstance.businessKey }</td>
+					<td>${r.processInstance.processVariables["QLLX"]}</td>
+					<td>${r.processInstance.processVariables["QLR"]}</td>
+					<td>${r.processInstance.processVariables["ZL"]}</td>
+					<td>${r.task.name}</td>
+					<td>${r.task.assignee}</td>
 					<td>
-						<fmt:formatDate value="${r.value.createTime}" pattern="yyyy年MM月dd日  HH时mm分" />
+						<fmt:formatDate value="${r.task.createTime}" pattern="yyyy年MM月dd日  HH时mm分" />
 					</td>
 					<td>
-						<c:url var="_details" value="/p/task/${r.value.id }/details"/>
+						<c:url var="_details" value="/p/task/${r.task.id }/details"/>
 						<a href="${_details }">办理</a>
 					</td>
 				</tr>

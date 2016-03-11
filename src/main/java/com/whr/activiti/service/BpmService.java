@@ -11,7 +11,8 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 
-import com.whr.activiti.model.UserInfo;
+import com.whr.activiti.dto.OutAndUsers;
+import com.whr.activiti.dto.ProcessInstanceAndTask;
 
 /**
  * 
@@ -61,7 +62,7 @@ public interface BpmService {
 	 * @param userId
 	 * @return
 	 */
-	Map<ProcessInstance,Task> findTasksByUser(String userId);
+	List<ProcessInstanceAndTask> findTasksByUser(String userId);
 	
 	/**
 	 * 查找指定流程实例的历史办理情况
@@ -103,7 +104,7 @@ public interface BpmService {
 	 * @param taskId
 	 * @return
 	 */
-	Map<FlowNode,List<UserInfo>> findNodeUsers(String taskId);
+	List<OutAndUsers> findNodeUsers(String taskId);
 	
 	
 	/**

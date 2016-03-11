@@ -1,22 +1,14 @@
-/**
- * jquery扩展center方法，用于居中
- * @param $
- */
+
 (function($){
 	$.fn.center = function () {
 	    this.css("position","absolute");
-	    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
-	                                                $(window).scrollTop()) + "px");
-	    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
-	                                                $(window).scrollLeft()) + "px");
+	    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+	    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
 	    return this;
 	}	
 })(jQuery);
 
-/**
- * jquery扩展drags方法，用于拖动
- * @param $
- */
+
 (function($) {
     $.fn.drags = function(opt) {
 
@@ -29,6 +21,7 @@
 
         var $selected = null;
         var $elements = (opt.handle === "") ? this : this.find(opt.handle);
+        console.log($elements);
 
         $elements.css('cursor', opt.cursor).on("mousedown", function(e) {
             if(opt.handle === "") {
@@ -71,9 +64,7 @@
 })(jQuery);
 
 
-/**
- * 基于jquery的简易对话框
- */
+
 function dialog(opt) {
 	var me = this;
 
@@ -105,8 +96,7 @@ function dialog(opt) {
 	$('body').append(this.dialogDiv);
 
 	this.dialogDiv.drags({
-		//拖动把手的选择器（对话框下的标题栏作为把手）
-		handle : '.dialog .dialogTitle'
+		handle : '.dialogTitle'
 	});
 	
 	this.setContent = function(html) {
@@ -172,4 +162,7 @@ function dialog(opt) {
 		});
 		return false;
 	};
+	
+
 }
+
