@@ -55,17 +55,16 @@ public class BpmServiceImpl implements BpmService {
 
 	@Autowired
 	private UserManager um;
-	
-	
+
 	@Transactional
 	@Override
-	public String startProcess(String processDefKey, String userId, String businessKey,Map<String,Object> variables) {
+	public String startProcess(String processDefKey, String userId, String businessKey, Map<String, Object> variables) {
 
 		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(userId);
 
 		// 启动流程实例,设置业务号（businessKey,唯一）
-		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey,variables);
+		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey, variables);
 
 		// 查找流程当前的任务节点
 		// Task task =
@@ -106,37 +105,12 @@ public class BpmServiceImpl implements BpmService {
 			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
 			// 指定任务所有者
 			ts.claim(task.getId(), targetUserId);
-			throw new RuntimeException("test");
 		}
 	}
 
-//	@Transactional
-//	@Override
-//	public void back(String taskId, String currentUserId, String targetUserId) {
-//		// 设置activiti用户信息
-//		Authentication.setAuthenticatedUserId(currentUserId);
-//
-//		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
-//
-//		// 查找对应task的流程实例id
-//		String processInstId = t.getProcessInstanceId();
-//
-//		// 设定流程提交方向变量（前进：forward；退回：backward）
-//		rts.setVariable(processInstId, "direction", "backward");
-//		ts.complete(taskId);
-//
-//		if (targetUserId != null) {
-//			// 查找流程当前的任务节点
-//			Task task = ts.createTaskQuery().processInstanceId(processInstId).singleResult();
-//			// 指定任务所有者
-//			ts.claim(task.getId(), targetUserId);
-//		}
-//
-//	}
-
 	@Override
 	public ProcessInstance findProcessInstanceById(String processInstanceId) {
-		return rts.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+		return rts.createProcessInstanceQuery().processInstanceId(processInstanceId).includeProcessVariables().singleResult();
 	}
 
 	@Override
@@ -146,9 +120,7 @@ public class BpmServiceImpl implements BpmService {
 		List<Task> tasks = ts.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
 		if (tasks != null && tasks.size() > 0) {
 			for (Task t : tasks) {
-				ProcessInstance pi = rts.createProcessInstanceQuery()
-						.processInstanceId(t.getProcessInstanceId())
-						.singleResult();
+				ProcessInstance pi = rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).includeProcessVariables().singleResult();
 				result.put(pi, t);
 			}
 		}
@@ -156,16 +128,16 @@ public class BpmServiceImpl implements BpmService {
 	}
 
 	@Override
-	public List<HistoricActivityInstance> findProcessHistory(String processInstanceId) {
+	public List<HistoricActivityInstance> findHistoricActivityInstance(String processInstanceId) {
 		// 查找实例的历史办理情况；根据启动时间排序（多条）
 		return hs.createHistoricActivityInstanceQuery().processInstanceId(processInstanceId)
 				.orderByHistoricActivityInstanceStartTime().asc().list();
 	}
 
 	@Override
-	public List<ProcessDefinition> findProcessDefByGroup(String group) {
-		// 查找group可启动的流程（可以是多个或一个）;需要加上latestVersion条件，否则会查询出历史版本
-		return rps.createProcessDefinitionQuery().startableByUser(group).latestVersion().list();
+	public List<ProcessDefinition> findAllProcessDef() {
+		// 需要加上latestVersion条件，否则会查询出历史版本
+		return rps.createProcessDefinitionQuery().latestVersion().list();
 	}
 
 	@Override
@@ -183,7 +155,7 @@ public class BpmServiceImpl implements BpmService {
 		HistoricProcessInstance hInst = hs.createHistoricProcessInstanceQuery().processInstanceId(pid).singleResult();
 
 		if (hInst == null) {
-			throw new ActivitiObjectNotFoundException("流程实例未找到：" + pid);
+			throw new ActivitiObjectNotFoundException("流程实例未找到-pid:" + pid);
 		}
 		BpmnModel bpmnModel = rps.getBpmnModel(hInst.getProcessDefinitionId());
 
@@ -200,13 +172,14 @@ public class BpmServiceImpl implements BpmService {
 		UserTask currentTask = getUserTaskDefById(taskId);
 
 		List<FlowNode> outNodes = findUserTaskOutNodes(currentTask);
-		
+
 		return outNodes;
 
 	}
 
 	/**
 	 * 通过UsrTask实例id查找其定义
+	 * 
 	 * @param taskId
 	 * @return
 	 */
@@ -215,8 +188,7 @@ public class BpmServiceImpl implements BpmService {
 		if (t == null) {
 			throw new ActivitiObjectNotFoundException("任务未找到--task id:" + taskId);
 		}
-		
-		
+
 		BpmnModel m = rps.getBpmnModel(t.getProcessDefinitionId());
 
 		// 主流程
@@ -241,6 +213,12 @@ public class BpmServiceImpl implements BpmService {
 
 	}
 
+	/**
+	 * 查找UserTask的出口节点
+	 * 
+	 * @param userTask
+	 * @return
+	 */
 	private List<FlowNode> findUserTaskOutNodes(UserTask userTask) {
 
 		// 获得当前UserTask的所有出口定义
@@ -248,7 +226,7 @@ public class BpmServiceImpl implements BpmService {
 		if (outFlows == null || outFlows.size() < 1) {
 			throw new ActivitiObjectNotFoundException("流程定义错误:节点" + userTask.getName() + "没有出口");
 		}
-		
+
 		List<FlowNode> outNodes = new ArrayList<FlowNode>();
 		for (SequenceFlow sf : outFlows) {
 
@@ -271,33 +249,43 @@ public class BpmServiceImpl implements BpmService {
 	}
 
 	@Override
-	public Task getTaskById(String taskId) {
+	public Task findTaskById(String taskId) {
 		return ts.createTaskQuery().taskId(taskId).singleResult();
 	}
 
 	@Override
-	public ProcessInstance getProcessInstanceByTaskId(String taskId) {
-		Task t = getTaskById(taskId);
-		return rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).singleResult();
+	public ProcessInstance findProcessInstanceByTaskId(String taskId) {
+		Task t = findTaskById(taskId);
+		return rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).includeProcessVariables().singleResult();
 	}
 
 	@Override
 	public Map<FlowNode, List<UserInfo>> findNodeUsers(String taskId) {
 		List<FlowNode> outs = findOutNodes(taskId);
-		
+
 		Map<FlowNode, List<UserInfo>> result = new LinkedHashMap<FlowNode, List<UserInfo>>();
-		for(FlowNode outNode : outs){
-			if(outNode instanceof UserTask){
-				UserTask un = (UserTask)outNode;
+		for (FlowNode outNode : outs) {
+			if (outNode instanceof UserTask) {
+				UserTask un = (UserTask) outNode;
 				List<UserInfo> users = um.findByGroups(un.getCandidateGroups());
 				result.put(un, users);
-			}else if(outNode instanceof EndEvent){
+			} else if (outNode instanceof EndEvent) {
 				result.put(outNode, null);
-			}else{
-				
+			} else {
+
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public HistoricProcessInstance findHistoricProcessInstanceByBusinessKey(String businessKey) {
+		HistoricProcessInstance hi = hs.createHistoricProcessInstanceQuery()
+				.processInstanceBusinessKey(businessKey)
+				.includeProcessVariables()
+				.singleResult();
+		return hi;
+
 	}
 
 }

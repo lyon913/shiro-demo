@@ -6,19 +6,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<jsp:include page="/WEB-INF/template/header.jsp"></jsp:include>
 <title>Process Started</title>
 </head>
 <body>
 
-	<table cellspacing="5px" style="width:100%">
+	<table align="center" class="bordered">
 		<thead align="center">
 			<tr>
-				<td>流程名称</td>
-				<td>业务号</td>
-				<td>当前节点</td>
-				<td>指派用户</td>
-				<td>开始时间</td>
-				<td>操作</td>
+				<th>流程名称</th>
+				<th>业务号</th>
+				<th>权利类型</th>
+				<th>权利人</th>
+				<th>坐落</th>
+				<th>当前节点</th>
+				<th>指派用户</th>
+				<th>开始时间</th>
+				<th>操作</th>
 			<tr>
 		</thead>
 		<tbody align="left">
@@ -26,6 +30,9 @@
 				<tr>
 					<td>${r.key.processDefinitionName }</td>
 					<td>${r.key.businessKey }</td>
+					<td>${r.key.processVariables["QLLX"]}</td>
+					<td>${r.key.processVariables["QLR"]}</td>
+					<td>${r.key.processVariables["ZL"]}</td>
 					<td>${r.value.name}</td>
 					<td>${r.value.assignee}</td>
 					<td>
@@ -39,6 +46,5 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<div id="selectUserDialog"></div>
 </body>
 </html>

@@ -8,6 +8,8 @@ public interface UserManager{
 
 	List<UserInfo> findAll();
 	
+	UserInfo findByLoginName(String loginName);
+	
 	List<UserInfo> findByGroup(String group);
 	
 	List<UserInfo> findByGroups(List<String> groups);

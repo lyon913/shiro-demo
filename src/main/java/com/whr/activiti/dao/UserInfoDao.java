@@ -11,6 +11,10 @@ import com.whr.activiti.model.UserInfo;
 
 @Repository
 public interface UserInfoDao extends JpaRepository<UserInfo, Long>{
+	
+	@Query("from UserInfo u where u.loginName = :loginName")
+	UserInfo findByLoginName(@Param("loginName")String loginName);
+	
 	@Query("from UserInfo u where u.group = :group")
 	List<UserInfo> findByGroup(@Param("group")String group);
 	

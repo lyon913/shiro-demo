@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -18,9 +19,19 @@ import com.whr.activiti.model.UserInfo;
  *
  */
 public interface BpmService {
-	Task getTaskById(String taskId);
+	/**
+	 * 通过id查找Task实例
+	 * @param taskId
+	 * @return
+	 */
+	Task findTaskById(String taskId);
 	
-	ProcessInstance getProcessInstanceByTaskId(String taskId);
+	/**
+	 * 通过taskId查找流程实例
+	 * @param taskId
+	 * @return
+	 */
+	ProcessInstance findProcessInstanceByTaskId(String taskId);
 	
 	/**
 	 * 启动流程，并指定第一个任务的所有者为启动者
@@ -31,16 +42,12 @@ public interface BpmService {
 	
 	/**
 	 * 提交流程
-	 * @param taskId
+	 * @param taskId task实例id
+	 * @param currentUserId 当前用户标识
+	 * @param targetUserId 目标用户标识
+	 * @param wf_direction 流程出口控制参数
 	 */
 	void complete(String taskId, String currentUserId, String targetUserId, String wf_direction);
-	
-//	/**
-//	 * 退回流程
-//	 * @param taskId
-//	 */
-//	void back(String taskId, String currentUserId, String targetUserId);
-	
 	
 	/**
 	 * 通过流程实例id查找流程实例
@@ -61,14 +68,14 @@ public interface BpmService {
 	 * @param processInstanceId
 	 * @return
 	 */
-	List<HistoricActivityInstance> findProcessHistory(String processInstanceId);
+	List<HistoricActivityInstance> findHistoricActivityInstance(String processInstanceId);
 	
 	/**
-	 * 查找用户组可启动的流程
+	 * 查找全部流程定义
 	 * @param group
 	 * @return
 	 */
-	List<ProcessDefinition> findProcessDefByGroup(String group);
+	List<ProcessDefinition> findAllProcessDef();
 	
 	/**
 	 * 通过key查找流程定义
@@ -85,18 +92,28 @@ public interface BpmService {
 	InputStream generateDiagram(String pid);
 
 	/**
-	 * 
+	 * 通过taskId查找出口节点
 	 * @param taskId
 	 * @return
 	 */
 	List<FlowNode> findOutNodes(String taskId);
 	
 	/**
-	 * 
+	 * 通过taskId查找出口节点和对应的候选用户
 	 * @param taskId
 	 * @return
 	 */
 	Map<FlowNode,List<UserInfo>> findNodeUsers(String taskId);
 	
+	
+	/**
+	 * 通过业务号查找流程实例历史
+	 * @param businessKey
+	 * @return
+	 */
+	HistoricProcessInstance findHistoricProcessInstanceByBusinessKey(String businessKey);
+	
 
+	
+	
 }

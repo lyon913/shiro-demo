@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -41,7 +42,7 @@ public class ProcessController {
 	public String processRepo(Model m) {
 		UserInfo currentUser = SessionManager.getLoginUser();
 		if (currentUser != null) {
-			List<ProcessDefinition> processes = bs.findProcessDefByGroup(currentUser.getGroup());
+			List<ProcessDefinition> processes = bs.findAllProcessDef();
 			m.addAttribute("pdList", processes);
 		}
 		return "/p/repo";
@@ -52,7 +53,7 @@ public class ProcessController {
 
 		String bKey = Utils.getBusinessKey();
 		Map<String,Object> variables = new HashMap<>();
-		variables.put("YWLX", "土地使用权/房屋所有权首次登记");
+		variables.put("QLLX", "土地使用权/房屋所有权首次登记");
 		variables.put("QLR", "郑房东");
 		variables.put("ZL", "云南省昆明市五华区人民中路42号右弼大厦4-A1");
 		bs.startProcess(processDefKey, SessionManager.getLoginUser().getLoginName(), bKey, variables);
@@ -95,9 +96,9 @@ public class ProcessController {
 	
 	@RequestMapping("/p/task/{taskId}/details")
 	public String taskDetails(@PathVariable String taskId, Model m) {
-		Task t = bs.getTaskById(taskId);
-		ProcessInstance pi = bs.getProcessInstanceByTaskId(taskId);
-		List<HistoricActivityInstance> history = bs.findProcessHistory(pi.getId());
+		Task t = bs.findTaskById(taskId);
+		ProcessInstance pi = bs.findProcessInstanceByTaskId(taskId);
+		List<HistoricActivityInstance> history = bs.findHistoricActivityInstance(pi.getId());
 		m.addAttribute("task", t);
 		m.addAttribute("processInstance", pi);
 		m.addAttribute("history",history);
@@ -112,5 +113,19 @@ public class ProcessController {
 		m.addAttribute("taskId",taskId);
 		m.addAttribute("cbk",cbk);
 		return "/p/outs";
+	}
+	
+	@RequestMapping(value = "/p/search", method = RequestMethod.GET)
+	public String initSearchForm() {
+		return "/p/search";
+	}
+	
+	@RequestMapping(value = "/p/search", method = RequestMethod.POST)
+	public String processSearchForm(String businessKey, Model m) {
+		HistoricProcessInstance hpi = bs.findHistoricProcessInstanceByBusinessKey(businessKey);
+		List<HistoricActivityInstance> hais = bs.findHistoricActivityInstance(hpi.getId());
+		m.addAttribute("hpi", hpi);
+		m.addAttribute("hais", hais);
+		return "/p/search";
 	}
 }

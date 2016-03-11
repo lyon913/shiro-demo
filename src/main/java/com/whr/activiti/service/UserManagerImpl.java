@@ -15,7 +15,7 @@ public class UserManagerImpl implements UserManager {
 
 	@Override
 	public List<UserInfo> findAll() {
-		return ud.findAll();
+		return (List<UserInfo>)ud.findAll();
 	}
 
 	@Override
@@ -26,6 +26,11 @@ public class UserManagerImpl implements UserManager {
 	@Override
 	public List<UserInfo> findByGroups(List<String> groups) {
 		return ud.findByGroups(groups);
+	}
+
+	@Override
+	public UserInfo findByLoginName(String loginName) {
+		return ud.findByLoginName(loginName);
 	}
 
 }

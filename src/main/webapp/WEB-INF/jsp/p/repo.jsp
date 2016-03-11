@@ -6,18 +6,21 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Process Started</title>
+<jsp:include page="/WEB-INF/template/header.jsp"></jsp:include>
 </head>
 <body>
 
-	<table style="width: 100%" align="center">
-		<tr>
-			<td>id</td>
-			<td>key</td>
-			<td>名称</td>
-			<td>描述</td>
-			<td>版本</td>
-			<td>操作</td>
-		</tr>
+	<table class="bordered" align="center">
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>key</th>
+				<th>名称</th>
+				<th>描述</th>
+				<th>版本</th>
+				<th>操作</th>
+			</tr>
+		</thead>
 		<c:forEach items="${pdList }" var="pd">
 			<tr>
 				<td>${pd.id }</td>
