@@ -41,15 +41,27 @@ public class BpmServiceImpl implements BpmService {
 	@Autowired
 	private ProcessEngineConfiguration processEngineConfiguration;
 
+	/**
+	 * 流程定义仓库接口
+	 */
 	@Autowired
 	private RepositoryService rps;
 
+	/**
+	 * 流程运行时接口
+	 */
 	@Autowired
 	private RuntimeService rts;
 
+	/**
+	 * 任务接口
+	 */
 	@Autowired
 	private TaskService ts;
 
+	/**
+	 * 流程历史接口
+	 */
 	@Autowired
 	private HistoryService hs;
 
@@ -66,10 +78,13 @@ public class BpmServiceImpl implements BpmService {
 		// 启动流程实例,设置业务号（businessKey,唯一）
 		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey, variables);
 
+		/**
+		 * 流程定义中已经根据流程创建者设置了第一个节点的指派用户(${initator})
+		 * 此处无需再指定。代码注释掉
+		 */
 		// 查找流程当前的任务节点
 		// Task task =
 		// ts.createTaskQuery().processInstanceId(instance.getId()).singleResult();
-
 		// 指定任务所有者
 		// ts.claim(task.getId(), userId);
 
@@ -81,21 +96,16 @@ public class BpmServiceImpl implements BpmService {
 	@Transactional
 	@Override
 	public void complete(String taskId, String currentUserId, String targetUserId, String wf_direction) {
-
 		// 设置activiti用户信息
 		Authentication.setAuthenticatedUserId(currentUserId);
-
 		// 此处简化处理代码
 		// 串行任务可以按下面查询，只会有一条记录；但并行任务可能有多条task，需修改处理方式
 		Task t = ts.createTaskQuery().taskId(taskId).singleResult();
-
 		if (t == null) {
 			throw new ActivitiObjectNotFoundException("未找到活动任务-taskid:" + taskId);
 		}
-
 		// 查找对应task的流程实例id
 		String processInstId = t.getProcessInstanceId();
-
 		// 设定流程提交方向变量(设定为目标节点id)
 		rts.setVariable(processInstId, "wf_direction", wf_direction);
 		ts.complete(t.getId());
@@ -151,14 +161,11 @@ public class BpmServiceImpl implements BpmService {
 	 */
 	@Override
 	public InputStream generateDiagram(String pid) {
-
 		HistoricProcessInstance hInst = hs.createHistoricProcessInstanceQuery().processInstanceId(pid).singleResult();
-
 		if (hInst == null) {
 			throw new ActivitiObjectNotFoundException("流程实例未找到-pid:" + pid);
 		}
 		BpmnModel bpmnModel = rps.getBpmnModel(hInst.getProcessDefinitionId());
-
 		ProcessDiagramGenerator dg = processEngineConfiguration.getProcessDiagramGenerator();
 		InputStream resource = dg.generateDiagram(bpmnModel, "png", rts.getActiveActivityIds(hInst.getId()),
 				Collections.<String> emptyList(), "宋体", "宋体", processEngineConfiguration.getClassLoader(), 1);
@@ -168,11 +175,8 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public List<FlowNode> findOutNodes(String taskId) {
-
 		UserTask currentTask = getUserTaskDefById(taskId);
-
 		List<FlowNode> outNodes = findUserTaskOutNodes(currentTask);
-
 		return outNodes;
 
 	}
@@ -188,9 +192,7 @@ public class BpmServiceImpl implements BpmService {
 		if (t == null) {
 			throw new ActivitiObjectNotFoundException("任务未找到--task id:" + taskId);
 		}
-
 		BpmnModel m = rps.getBpmnModel(t.getProcessDefinitionId());
-
 		// 主流程
 		Process mp = m.getMainProcess();
 		// 查找流程定义中的所有UserTask
@@ -199,16 +201,13 @@ public class BpmServiceImpl implements BpmService {
 		if (uts == null || uts.size() < 1) {
 			throw new ActivitiObjectNotFoundException("流程定义错误(流程" + mp.getId() + "中未找到UserTask)");
 		}
-
 		UserTask taskDef = null;// 查找的目标任务
-
 		for (UserTask ut : uts) {
 			// 遍历查找指定UserTask
 			if (t.getTaskDefinitionKey().equals(ut.getId())) {
 				taskDef = ut;
 			}
 		}
-
 		return taskDef;
 
 	}
@@ -226,7 +225,6 @@ public class BpmServiceImpl implements BpmService {
 		if (outFlows == null || outFlows.size() < 1) {
 			throw new ActivitiObjectNotFoundException("流程定义错误:节点" + userTask.getName() + "没有出口");
 		}
-
 		List<FlowNode> outNodes = new ArrayList<FlowNode>();
 		for (SequenceFlow sf : outFlows) {
 
@@ -262,7 +260,6 @@ public class BpmServiceImpl implements BpmService {
 	@Override
 	public Map<FlowNode, List<UserInfo>> findNodeUsers(String taskId) {
 		List<FlowNode> outs = findOutNodes(taskId);
-
 		Map<FlowNode, List<UserInfo>> result = new LinkedHashMap<FlowNode, List<UserInfo>>();
 		for (FlowNode outNode : outs) {
 			if (outNode instanceof UserTask) {

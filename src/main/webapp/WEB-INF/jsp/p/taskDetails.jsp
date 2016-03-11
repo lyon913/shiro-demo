@@ -108,6 +108,39 @@
 			});
 		}
 		
+		
+		function CompleteTaskView(ctx,data){
+			var me =this;
+			this.ctx = ctx;
+			this.data = data;
+			this.templateUrl = this.ctx + '/template/view/CompleteTaskView.html';
+			//创建一个空对象
+			this.view = $();
+			
+			this.init = function(){
+				
+			}
+			
+			this.renderTemplate = function(cbk){
+				$.ajax({
+					url : me.templateUrl,
+					type : 'GET',
+					dataType : 'html',
+					success : function(templateHtml) {
+						me.view.html(templateHtml);
+						cbk(templateHtml);
+					},
+					error:function(data){
+						console.log(data.responseText);
+					}
+				});
+			}
+			
+			
+			this.bind = function(){
+				
+			}
+		}
 
 	</script>
 </body>
