@@ -2,4 +2,5 @@
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/default.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.12.1.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jsviews.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/dialog.js"></script>

@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
@@ -11,7 +12,7 @@
 <jsp:include page="/WEB-INF/template/header.jsp"></jsp:include>
 </head>
 <body>
-	<div>业务号:${processInstance.businessKey } </div>
+	<div>业务号:${processInstance.businessKey }</div>
 	<div>当前节点:${task.name }</div>
 	<div>
 		<button onclick="complete('${task.id}')">提交</button>
@@ -41,9 +42,12 @@
 						<td>${status.index}</td>
 						<td>${h.activityName }</td>
 						<td>${h.assignee}</td>
-						<td><fmt:formatDate value="${h.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-						<td><fmt:formatDate value="${h.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-						<td><tags:durationFormat value="${h.durationInMillis}" pattern="d天H时m分"/></td>
+						<td><fmt:formatDate value="${h.startTime}"
+								pattern="yyyy-MM-dd HH:mm:ss" /></td>
+						<td><fmt:formatDate value="${h.endTime}"
+								pattern="yyyy-MM-dd HH:mm:ss" /></td>
+						<td><tags:durationFormat value="${h.durationInMillis}"
+								pattern="d天H时m分" /></td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -52,96 +56,117 @@
 
 	<script type="text/javascript">
 		var _ctx = "${pageContext.request.contextPath}";
-		var dialogId='userSelectModal';
-		
+		var dialogId = 'userSelectModal';
+		var taskId = '${task.id}';
+
 		function complete(taskId) {
 			//showUserDialog(taskId, 'nodeSelected');
+			/**
 			var d = new dialog({
-				dialogId:'',
-				title:'提交业务',
-				width:400,
-				height:200,
-				cbk:nodeSelected
+				dialogId : '',
+				title : '提交业务',
+				width : 400,
+				height : 200
 			});
-			var url =  _ctx + '/p/task/' + taskId + '/outs/nodeSelected';
-			var type = 'GET';
-			d.openUrl(url,type,null);
+			**/
+			
+			//获取可供发送的节点数据
+			$.ajax({
+				url : _ctx + '/p/task/' + taskId + '/outs/ajax',
+				type : 'GET',
+				dataType : 'json'
+			}).done(function(data){
+				//加载UI模板，并绑定数据
+				var view = new CompleteTaskView(_ctx, {outgoings:data},doComplete);
+				view.done(function(){
+					//模板加载完成
+					//d.openElement(view.getViewElement());
+				});
+			}).fail(function(data) {
+				console.log(data.responseText);
+			});
+
 		}
 
-		function nodeSelected(taskId, selectData) {
-			console.log(taskId);
-			console.log(selectData);
-			var msg = "确认发送流程到『 "+selectData.targetNode.name+"  』节点";
-			if(selectData.targetUser){
-				msg += "-『" + selectData.targetUser.name+"』";
-			}
-			if(confirm(msg + "？")){
-				$('#'+dialogId).empty();
-				$('#'+dialogId).remove();
-				
-				var tu = selectData.targetUser?selectData.targetUser.loginName:'';
-				var tn = selectData.targetNode?selectData.targetNode.id:'';
-				doComplete(taskId,tu,tn);
-			}
-			
-			
-		}
-
-		
-		function doComplete(taskId,targetUser,wf_direction){
+		function doComplete(data) {
 			$.ajax({
 				url : _ctx + '/p/task/' + taskId + '/complete',
 				type : 'POST',
 				data : {
-					targetUser:targetUser,
-					wf_direction:wf_direction
+					targetUser : data.users[0].loginName,
+					wf_direction : data.outNode.id
 				},
 				dataType : 'text',
 				success : function(data) {
 					alert("业务已提交");
 					window.location = _ctx + '/p/todoList';
 				},
-				error:function(data){
+				error : function(data) {
 					alert("业务提交失败。");
 					console.log(data.responseText);
 				}
 			});
 		}
-		
-		
-		function CompleteTaskView(ctx,data){
-			var me =this;
+
+
+		function CompleteTaskView(ctx, data, selCbk) {
+			//模板通过ajax加载，此对象使用deferred
+			var dtd =  $.Deferred();
+			var me = this;
 			this.ctx = ctx;
 			this.data = data;
-			this.templateUrl = this.ctx + '/template/view/CompleteTaskView.html';
-			//创建一个空对象
-			this.view = $();
-			
-			this.init = function(){
+			this.templateUrl = this.ctx
+					+ '/resources/template/view/completeTaskView.html';
+
+			$.ajax({
+				url:me.templateUrl, 
+				type:'get'
+			}).done(function(templateHtml){
 				
-			}
-			
-			this.renderTemplate = function(cbk){
-				$.ajax({
-					url : me.templateUrl,
-					type : 'GET',
-					dataType : 'html',
-					success : function(templateHtml) {
-						me.view.html(templateHtml);
-						cbk(templateHtml);
-					},
-					error:function(data){
-						console.log(data.responseText);
+				//编译模板
+				me.template = $.templates(templateHtml);
+
+				//数据绑定
+				me.viewElement = me.template.link($('<div></div>'), me.data);;
+				
+				//创建对话框
+				var d = new dialog({
+					dialogId : '',
+					title : '提交业务',
+					width : 400,
+					height : 200
+				});
+				
+				//绑定模板中的button事件处理
+				me.viewElement.find('.selectButton').on('click', function() {
+					var view = $.view(this);
+					//view是users节点，需要返回的是包含outNode的父节点
+					var data = view.parent.parent.data;
+					console.log(data);
+					
+					var msg = "确认发送流程到『 " + data.outNode.name + "  』节点";
+					if (data.users && data.users.length) {
+						msg += "-『" + data.users[0].name + "』";
+					}
+					if(confirm(msg)){
+						selCbk(data);
+						d.close();
 					}
 				});
-			}
-			
-			
-			this.bind = function(){
-				
-			}
-		}
+				d.openElement(me.viewElement);
+				//模板加载完成，延迟对象解决
+				dtd.resolve();
+			}).fail(function(data){
+				console.log('加载模板错误')
+				dtd.reject();
+			});
 
+    		this.getViewElement = function() {
+				return me.viewElement;
+			};
+			
+			return dtd.promise(this);
+		}
 	</script>
 </body>
 </html>

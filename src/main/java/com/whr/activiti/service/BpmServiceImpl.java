@@ -278,7 +278,11 @@ public class BpmServiceImpl implements BpmService {
 				result.add(ous);
 			} else if (outNode instanceof EndEvent) {
 				//出口是EndEvent流程结束，则没有候选用户。
-				OutAndUsers ous = new OutAndUsers(outNode,null);
+				List<UserInfo> users  = new ArrayList<UserInfo>();
+				UserInfo ui = new UserInfo();
+				ui.setName("办结");
+				users.add(ui);
+				OutAndUsers ous = new OutAndUsers(outNode,users);
 				result.add(ous);
 			} else {
 

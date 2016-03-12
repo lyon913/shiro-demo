@@ -21,7 +21,6 @@
 
         var $selected = null;
         var $elements = (opt.handle === "") ? this : this.find(opt.handle);
-        console.log($elements);
 
         $elements.css('cursor', opt.cursor).on("mousedown", function(e) {
             if(opt.handle === "") {
@@ -69,7 +68,6 @@ function dialog(opt) {
 	var me = this;
 
 	this.dialogId = opt.dialogId;
-	this.callBack = opt.cbk;
 	this.title = opt.title;
 	this.width = opt.width;
 	this.height = opt.height;
@@ -111,17 +109,24 @@ function dialog(opt) {
 			data : data,
 			success : function(response) {
 				me.setContent(response);
+				me.show();
 			},
 			error : function(response) {
 				console.log(response.responseText);
 			}
 		});
-		me.show();
+		
 	};
 
 	this.openHtml = function(html) {
 		me.setContent(html);
-		me.dialogDiv.show();
+		me.show();
+	};
+	
+	this.openElement = function(element) {
+		me.setContent('');
+		me.contentDiv.append(element);
+		me.show();
 	};
 	
 	this.show = function(){
@@ -137,32 +142,6 @@ function dialog(opt) {
 		me.dialogDiv.empty();
 		me.dialogDiv.remove();
 	};
-
-	this.returnValue = function(value) {
-		me.callBack(value);
-		return false;
-	};
-
-	this.returnHtml = function() {
-		me.callBack(this.contentDiv.html());
-		return false;
-	};
-
-	this.reloadContent = function(url, type, data) {
-		$.ajax({
-			url : url,
-			type : type,
-			data : data,
-			success : function(response) {
-				me.dialogDiv.html(response);
-			},
-			error : function(response) {
-				console.log(response.responseText);
-			}
-		});
-		return false;
-	};
-	
 
 }
 

@@ -126,6 +126,12 @@ public class ProcessController {
 		return "/p/outs";
 	}
 	
+	@RequestMapping("/p/task/{taskId}/outs/ajax")
+	public @ResponseBody List<OutAndUsers> outNodesAjax(@PathVariable String taskId, Model m) throws JsonProcessingException {
+		List<OutAndUsers> ou = bs.findNodeUsers(taskId);
+		return ou;
+	}
+	
 	@RequestMapping(value = "/p/search", method = RequestMethod.GET)
 	public String initSearchForm() {
 		return "/p/search";

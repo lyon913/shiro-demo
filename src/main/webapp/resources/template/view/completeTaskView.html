@@ -1,14 +1,25 @@
 
-<table>
-	<tr>
-		<th>业务流向</th>
-		<th>接收人</th>
-	</tr>
-	{{for outgoings}}
-	<tr>
-		<td>{{：}}</td>
-		<td>Row 1: Col 2</td>
-	</tr>
-	{{/for}}
+<table id="completeTaskView" class="bordered" style="width: 100%;">
+	<thead>
+		<tr>
+			<th>业务流向</th>
+			<th>接收人</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{for outgoings}}
+		<tr>
+			<td>{{:outNode.name}}</td>
+			<td>
+				{{for users}}
+						<button class="selectButton">{{:name}}</button> 
+				{{else}}
+						<button class="selectButton">办结</button> 
+				{{/for}}
+
+			</td>
+		</tr>
+		{{/for}}
+	</tbody>
 </table>
 
