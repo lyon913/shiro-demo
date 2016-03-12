@@ -80,7 +80,7 @@ public class BpmServiceImpl implements BpmService {
 		ProcessInstance instance = rts.startProcessInstanceByKey(processDefKey, businessKey, variables);
 
 		/**
-		 * 流程定义中已经根据流程创建者设置了第一个节点的指派用户(${initator})
+		 * 流程定义中已经根据流程创建者设置了第一个节点的指派用户为流程启动者(${initator})
 		 * 此处无需再指定。代码注释掉
 		 */
 		// 查找流程当前的任务节点
@@ -143,7 +143,7 @@ public class BpmServiceImpl implements BpmService {
 	public List<HistoricActivityInstance> findHistoricActivityInstance(String processInstanceId) {
 		// 查找实例的历史办理情况；根据启动时间排序（多条）
 		return hs.createHistoricActivityInstanceQuery().processInstanceId(processInstanceId)
-				.orderByHistoricActivityInstanceStartTime().asc().list();
+				.orderByHistoricActivityInstanceStartTime().asc().orderByHistoricActivityInstanceEndTime().asc().list();
 	}
 
 	@Override
@@ -159,16 +159,21 @@ public class BpmServiceImpl implements BpmService {
 	}
 
 	/**
-	 * 
+	 * 输出流程图
 	 */
 	@Override
 	public InputStream generateDiagram(String pid) {
+		//查找流程实例（此处使用HistoricProcessInstance，即可处理已办结的流程）
 		HistoricProcessInstance hInst = hs.createHistoricProcessInstanceQuery().processInstanceId(pid).singleResult();
 		if (hInst == null) {
 			throw new ActivitiObjectNotFoundException("流程实例未找到-pid:" + pid);
 		}
+		//流程定义模型
 		BpmnModel bpmnModel = rps.getBpmnModel(hInst.getProcessDefinitionId());
+		
+		//流程图生成器
 		ProcessDiagramGenerator dg = processEngineConfiguration.getProcessDiagramGenerator();
+		//生成png图片stream
 		InputStream resource = dg.generateDiagram(bpmnModel, "png", rts.getActiveActivityIds(hInst.getId()),
 				Collections.<String> emptyList(), "宋体", "宋体", processEngineConfiguration.getClassLoader(), 1);
 		return resource;
@@ -261,16 +266,18 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public List<OutAndUsers> findNodeUsers(String taskId) {
+		//获得所有出口
 		List<FlowNode> outs = findOutNodes(taskId);
 		List<OutAndUsers> result = new ArrayList<OutAndUsers>();
 		for (FlowNode outNode : outs) {
 			if (outNode instanceof UserTask) {
+				//出口是UserTask，查找出口节点可选用户
 				UserTask t = (UserTask) outNode;
 				List<UserInfo> users = um.findByGroups(t.getCandidateGroups());
-				
 				OutAndUsers ous = new OutAndUsers(t,users);
 				result.add(ous);
 			} else if (outNode instanceof EndEvent) {
+				//出口是EndEvent流程结束，则没有候选用户。
 				OutAndUsers ous = new OutAndUsers(outNode,null);
 				result.add(ous);
 			} else {
@@ -282,12 +289,19 @@ public class BpmServiceImpl implements BpmService {
 
 	@Override
 	public HistoricProcessInstance findHistoricProcessInstanceByBusinessKey(String businessKey) {
+		//查找流程实例历史（在办、完结都可查到）。条件为业务号
 		HistoricProcessInstance hi = hs.createHistoricProcessInstanceQuery()
 				.processInstanceBusinessKey(businessKey)
 				.includeProcessVariables()
 				.singleResult();
 		return hi;
 
+	}
+
+	@Override
+	public void setProcessVariables(String processInstanceId, Map<String, Object> variables) {
+		//设置流程变量；已存在的变量会被更新
+		rts.setVariables(processInstanceId, variables);
 	}
 
 }

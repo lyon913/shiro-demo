@@ -42,6 +42,12 @@ public interface BpmService {
 	String startProcess(String processDefKey, String userId, String businessKey,Map<String,Object> variables);
 	
 	/**
+	 * 设置/更新流程变量参数
+	 * @param params
+	 */
+	void setProcessVariables(String processInstanceId, Map<String,Object> variables);
+	
+	/**
 	 * 提交流程
 	 * @param taskId task实例id
 	 * @param currentUserId 当前用户标识
