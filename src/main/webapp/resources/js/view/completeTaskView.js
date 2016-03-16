@@ -1,5 +1,5 @@
 /**
- * 
+ * 提交业务对话框
  */
 
 function CompleteTaskView(ctx, data, selCbk) {
@@ -21,7 +21,6 @@ function CompleteTaskView(ctx, data, selCbk) {
 
 		// 数据绑定
 		me.viewElement = me.template.link($('<div></div>'), me.data);
-		;
 
 		// 创建对话框
 		var d = new dialog({

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.whr.activiti.dao.mybatis.CustomHistoricInstanceMapper">
+	<select id="findDoneListByUserId" resultMap="historicProcessInstanceAndVariablesResultMap">
+		SELECT distinct RES.*,
+		VAR.ID_ as VAR_ID_,
+		VAR.NAME_ as VAR_NAME_,
+		VAR.VAR_TYPE_ as VAR_TYPE_,
+		VAR.REV_ as VAR_REV_,
+		VAR.PROC_INST_ID_ as VAR_PROC_INST_ID_,
+		VAR.EXECUTION_ID_ as VAR_EXECUTION_ID_,
+		VAR.TASK_ID_ as VAR_TASK_ID_,
+		VAR.BYTEARRAY_ID_ as VAR_BYTEARRAY_ID_,
+		VAR.DOUBLE_ as VAR_DOUBLE_,
+		VAR.TEXT_ as VAR_TEXT_,
+		VAR.TEXT2_ as VAR_TEXT2_,
+		VAR.LAST_UPDATED_TIME_ as VAR_LAST_UPDATED_TIME_,
+		VAR.LONG_ as VAR_LONG_
+		FROM ACT_HI_PROCINST RES
+		left outer join ACT_HI_VARINST VAR
+			on (RES.proc_inst_id_ =	VAR.proc_inst_id_)
+		where RES.proc_inst_id_ in
+			(select proc_inst_id_ from	ACT_HI_TASKINST t 
+				where 
+				t.assignee_= #{userId} 
+				and	t.end_time_ is not null)
+			and RES.end_act_id_ is null
+		order by RES.start_time_ desc
+	</select>
+	<select id="findDoneListByUserIdPage" resultMap="historicProcessInstanceAndVariablesResultMap">
+		SELECT distinct
+		res.*,
+		VAR.ID_ as VAR_ID_,
+		VAR.NAME_ as VAR_NAME_,
+		VAR.VAR_TYPE_ as VAR_TYPE_,
+		VAR.REV_ as VAR_REV_,
+		VAR.PROC_INST_ID_ as VAR_PROC_INST_ID_,
+		VAR.EXECUTION_ID_ as VAR_EXECUTION_ID_,
+		VAR.TASK_ID_ as VAR_TASK_ID_,
+		VAR.BYTEARRAY_ID_ as VAR_BYTEARRAY_ID_,
+		VAR.DOUBLE_ as VAR_DOUBLE_,
+		VAR.TEXT_ as VAR_TEXT_,
+		VAR.TEXT2_ as VAR_TEXT2_,
+		VAR.LAST_UPDATED_TIME_ as VAR_LAST_UPDATED_TIME_,
+		VAR.LONG_ as VAR_LONG_
+		from
+		( select rownum as r,pi.* FROM ACT_HI_PROCINST pi
+			where pi.proc_inst_id_ in
+				(select distinct proc_inst_id_ 
+					from ACT_HI_TASKINST t 
+				where 
+					t.assignee_= #{userId}
+					and	t.end_time_ is not null)
+					and pi.end_act_id_ is null
+				order by pi.start_time_ desc) res
+		left outer join ACT_HI_VARINST VAR
+		on (RES.proc_inst_id_ =	VAR.proc_inst_id_)
+		where res.r <![CDATA[ >= ]]> #{first} and res.r <![CDATA[ < ]]> #{last}
+	</select>
+	<select id="countDoneListByUserId" resultType="Long">
+	select  count(*) FROM ACT_HI_PROCINST pi
+		where pi.proc_inst_id_ in
+		(select distinct proc_inst_id_ from ACT_HI_TASKINST t where
+			t.assignee_= 'user1' and
+			t.end_time_ is not null)
+		and pi.end_act_id_ is null
+	</select>
+	<resultMap id="historicProcessInstanceResultMap"
+		type="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="processInstanceId" column="PROC_INST_ID_"
+			jdbcType="VARCHAR" />
+		<result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+		<result property="processDefinitionId" column="PROC_DEF_ID_"
+			jdbcType="VARCHAR" />
+		<result property="startTime" column="START_TIME_" jdbcType="TIMESTAMP" />
+		<result property="endTime" column="END_TIME_" jdbcType="TIMESTAMP" />
+		<result property="durationInMillis" column="DURATION_"
+			jdbcType="BIGINT" />
+		<result property="startUserId" column="START_USER_ID_"
+			jdbcType="VARCHAR" />
+		<result property="startActivityId" column="START_ACT_ID_"
+			jdbcType="VARCHAR" />
+		<result property="endActivityId" column="END_ACT_ID_" jdbcType="VARCHAR" />
+		<result property="superProcessInstanceId" column="SUPER_PROCESS_INSTANCE_ID_"
+			jdbcType="VARCHAR" />
+		<result property="deleteReason" column="DELETE_REASON_"
+			jdbcType="VARCHAR" />
+		<result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="historicProcessInstanceAndVariablesResultMap"
+		type="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl">
+		<id property="id" column="ID_" jdbcType="VARCHAR" />
+		<result property="processInstanceId" column="PROC_INST_ID_"
+			jdbcType="VARCHAR" />
+		<result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+		<result property="processDefinitionId" column="PROC_DEF_ID_"
+			jdbcType="VARCHAR" />
+		<result property="startTime" column="START_TIME_" jdbcType="TIMESTAMP" />
+		<result property="endTime" column="END_TIME_" jdbcType="TIMESTAMP" />
+		<result property="durationInMillis" column="DURATION_"
+			jdbcType="BIGINT" />
+		<result property="startUserId" column="START_USER_ID_"
+			jdbcType="VARCHAR" />
+		<result property="startActivityId" column="START_ACT_ID_"
+			jdbcType="VARCHAR" />
+		<result property="endActivityId" column="END_ACT_ID_" jdbcType="VARCHAR" />
+		<result property="superProcessInstanceId" column="SUPER_PROCESS_INSTANCE_ID_"
+			jdbcType="VARCHAR" />
+		<result property="deleteReason" column="DELETE_REASON_"
+			jdbcType="VARCHAR" />
+		<result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
+		<result property="name" column="NAME_" jdbcType="VARCHAR" />
+		<collection property="queryVariables" column="EXECUTION_ID_"
+			javaType="ArrayList"
+			ofType="org.activiti.engine.impl.persistence.entity.HistoricVariableInstanceEntityImpl">
+			<id property="id" column="VAR_ID_" />
+			<result property="name" column="VAR_NAME_" javaType="String"
+				jdbcType="VARCHAR" />
+			<result property="variableType" column="VAR_TYPE_"
+				javaType="org.activiti.engine.impl.variable.VariableType" jdbcType="VARCHAR" />
+			<result property="revision" column="VAR_REV_" jdbcType="INTEGER" />
+			<result property="processInstanceId" column="VAR_PROC_INST_ID_"
+				jdbcType="VARCHAR" />
+			<result property="executionId" column="VAR_EXECUTION_ID_"
+				jdbcType="VARCHAR" />
+			<result property="taskId" column="VAR_TASK_ID_" jdbcType="VARCHAR" />
+			<result property="byteArrayRef" column="VAR_BYTEARRAY_ID_"
+				typeHandler="ByteArrayRefTypeHandler" />
+			<result property="doubleValue" column="VAR_DOUBLE_" jdbcType="DOUBLE" />
+			<result property="textValue" column="VAR_TEXT_" jdbcType="VARCHAR" />
+			<result property="textValue2" column="VAR_TEXT2_" jdbcType="VARCHAR" />
+			<result property="longValue" column="VAR_LONG_" jdbcType="BIGINT" />
+		</collection>
+	</resultMap>
+
+
+</mapper>

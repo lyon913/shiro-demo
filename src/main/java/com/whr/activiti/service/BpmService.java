@@ -10,7 +10,9 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.springframework.data.domain.Page;
 
+import com.whr.activiti.dto.HistoricProcessInstanceAndTask;
 import com.whr.activiti.dto.OutAndUsers;
 import com.whr.activiti.dto.ProcessInstanceAndTask;
 
@@ -71,6 +73,15 @@ public interface BpmService {
 	List<ProcessInstanceAndTask> findTasksByUser(String userId);
 	
 	/**
+	 * 查找用户当前待处理的任务(分页)
+	 * @param userId
+	 * @param firstResult
+	 * @param maxResults
+	 * @return
+	 */
+	Page<ProcessInstanceAndTask> findTasksByUser(String userId,int page, int size);
+	
+	/**
 	 * 查找指定流程实例的历史办理情况
 	 * @param processInstanceId
 	 * @return
@@ -120,7 +131,22 @@ public interface BpmService {
 	 */
 	HistoricProcessInstance findHistoricProcessInstanceByBusinessKey(String businessKey);
 	
+	
+	/**
+	 * 查找用户已办事项（该用户已处理，但流程尚未结束的）
+	 * @param userId
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	List<HistoricProcessInstanceAndTask> findInvolvedByUser(String userId);
 
-	
-	
+	/**
+	 * 查找用户已办事项（该用户已处理，但流程尚未结束的），并分页返回
+	 * @param userId
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	Page<HistoricProcessInstanceAndTask> findInvolvedByUser(String userId,int page, int size);
 }

@@ -15,31 +15,33 @@
 	<table align="center" class="bordered">
 		<thead align="center">
 			<tr>
-				<th>流程名称</th>
 				<th>业务号</th>
 				<th>权利类型</th>
 				<th>权利人</th>
 				<th>坐落</th>
+				<th>创建时间</th>
 				<th>当前节点</th>
-				<th>指派用户</th>
-				<th>开始时间</th>
+				<th>当前指派</th>
 				<th>操作</th>
 			<tr>
 		</thead>
 		<tbody align="left">
-			<c:forEach items="${result}" var="r">
+			<c:forEach items="${result.content }" var="r">
 				<tr>
-					<td>${r.processInstance.processDefinitionName }</td>
 					<td>${r.processInstance.businessKey }</td>
 					<td>${r.processInstance.processVariables["QLLX"]}</td>
 					<td>${r.processInstance.processVariables["QLR"]}</td>
 					<td>${r.processInstance.processVariables["ZL"]}</td>
+					<td>
+						<fmt:formatDate value="${r.processInstance.startTime}" pattern="yyyy年MM月dd日  HH时mm分" />
+					</td>
+					
 					<td>${r.task.name}</td>
 					<td>${r.task.assignee}</td>
-					<td><fmt:formatDate value="${r.task.createTime}"
-							pattern="yyyy年MM月dd日  HH时mm分" /></td>
-					<td><c:url var="_details"
-							value="/p/task/${r.task.id }/details" /> <a href="${_details }">办理</a>
+					
+					<td>
+						<c:url var="_details" value="/p/task/${r.task.id }/details" />
+						<a href="${_details }">查看</a>
 					</td>
 				</tr>
 			</c:forEach>

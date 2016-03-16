@@ -16,6 +16,7 @@ import org.activiti.engine.task.Task;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.whr.activiti.dto.HistoricProcessInstanceAndTask;
 import com.whr.activiti.dto.OutAndUsers;
 import com.whr.activiti.dto.ProcessInstanceAndTask;
 import com.whr.activiti.model.UserInfo;
@@ -100,6 +102,7 @@ public class ProcessController {
 	public String todoList(Model m) {
 		UserInfo currentUser = SessionManager.getLoginUser();
 		if (currentUser != null) {
+			//List<ProcessInstanceAndTask> result = bs.findTasksByUser(currentUser.getLoginName());
 			List<ProcessInstanceAndTask> result = bs.findTasksByUser(currentUser.getLoginName());
 			m.addAttribute("result", result);
 		}
@@ -144,5 +147,15 @@ public class ProcessController {
 		m.addAttribute("hpi", hpi);
 		m.addAttribute("hais", hais);
 		return "/p/search";
+	}
+	
+	@RequestMapping("/p/doneList")
+	public String doneList(Model m) {
+		UserInfo currentUser = SessionManager.getLoginUser();
+		if (currentUser != null) {
+			Page<HistoricProcessInstanceAndTask> result = bs.findInvolvedByUser(currentUser.getLoginName(),0,2);
+			m.addAttribute("result", result);
+		}
+		return "/p/doneList";
 	}
 }

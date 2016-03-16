@@ -16,22 +16,32 @@ import org.activiti.bpmn.model.StartEvent;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.interceptor.Command;
+import org.activiti.engine.impl.interceptor.CommandContext;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.whr.activiti.dao.mybatis.CustomHistoricInstanceMapper;
+import com.whr.activiti.dto.HistoricProcessInstanceAndTask;
 import com.whr.activiti.dto.OutAndUsers;
 import com.whr.activiti.dto.ProcessInstanceAndTask;
 import com.whr.activiti.model.UserInfo;
@@ -65,6 +75,12 @@ public class BpmServiceImpl implements BpmService {
 	 */
 	@Autowired
 	private HistoryService hs;
+	
+	/**
+	 * 流程引擎管理接口
+	 */
+	@Autowired
+	ManagementService ms;
 
 	@Autowired
 	private UserManager um;
@@ -307,5 +323,103 @@ public class BpmServiceImpl implements BpmService {
 		//设置流程变量；已存在的变量会被更新
 		rts.setVariables(processInstanceId, variables);
 	}
+
+	@Override
+	public Page<ProcessInstanceAndTask> findTasksByUser(String userId, int page, int size) {
+		List<ProcessInstanceAndTask> result = new ArrayList<ProcessInstanceAndTask>();
+		// 指定流程和用户查询task
+		//指定分页参数
+		List<Task> tasks = ts.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().listPage(page*size, size);
+		//记录总数
+		long count = ts.createTaskQuery().taskAssignee(userId).count();
+		
+		//查找task对应的流程实例
+		if (tasks != null && tasks.size() > 0) {
+			for (Task t : tasks) {
+				ProcessInstance pi = rts.createProcessInstanceQuery().processInstanceId(t.getProcessInstanceId()).includeProcessVariables().singleResult();
+				ProcessInstanceAndTask pat = new ProcessInstanceAndTask(pi, t);
+				result.add(pat);
+			}
+		}
+		
+		//包装为spring data 的分页格式
+		Pageable pageable = new PageRequest(page, size);
+		Page<ProcessInstanceAndTask> p = new PageImpl<ProcessInstanceAndTask>(result,pageable,count);
+		return p;
+	}
+
+
+	@Override
+	public List<HistoricProcessInstanceAndTask> findInvolvedByUser(final String userId) {
+		List<HistoricProcessInstanceAndTask> result = new ArrayList<HistoricProcessInstanceAndTask>();
+		//sql 查询已办理的业务（用户办理过，但流程未完）
+		List<HistoricProcessInstance> insts = ms.executeCommand(new Command<List<HistoricProcessInstance>>() {    
+		    @Override    
+		    public List<HistoricProcessInstance> execute(CommandContext commandContext) { 
+		    	CustomHistoricInstanceMapper mapper = commandContext.getDbSqlSession().getCustomMapper(CustomHistoricInstanceMapper.class);
+		     return mapper.findDoneListByUserId(userId);
+		    }    
+		   });
+		
+		if (insts != null && insts.size() > 0) {
+			for (HistoricProcessInstance pi : insts) {
+				//查找流程实例当前所处的节点
+				List<HistoricTaskInstance> tasks = hs.createHistoricTaskInstanceQuery()
+						.processInstanceId(pi.getId())
+						.unfinished()
+						.orderByTaskCreateTime()
+						.desc()
+						.list();
+				if(tasks != null && tasks.size() > 0) {
+					HistoricProcessInstanceAndTask pat = new HistoricProcessInstanceAndTask(pi, tasks.get(0));
+					result.add(pat);
+				}
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public Page<HistoricProcessInstanceAndTask> findInvolvedByUser(final String userId, final int page, final int size) {
+		List<HistoricProcessInstanceAndTask> result = new ArrayList<HistoricProcessInstanceAndTask>();
+		//sql 查询已办理的业务（用户办理过，但流程未完）
+		List<HistoricProcessInstance> insts = ms.executeCommand(new Command<List<HistoricProcessInstance>>() {    
+		    @Override    
+		    public List<HistoricProcessInstance> execute(CommandContext commandContext) { 
+		    	CustomHistoricInstanceMapper mapper = commandContext.getDbSqlSession().getCustomMapper(CustomHistoricInstanceMapper.class);
+		     return mapper.findDoneListByUserIdPage(userId,page*size+1,(page*size+1)+size);
+		    }    
+		});
+		
+		long count = ms.executeCommand(new Command<Long>() {    
+		    @Override    
+		    public Long execute(CommandContext commandContext) { 
+		    	CustomHistoricInstanceMapper mapper = commandContext.getDbSqlSession().getCustomMapper(CustomHistoricInstanceMapper.class);
+		     return mapper.countDoneListByUserId(userId);
+		    }    
+		});
+		
+		if (insts != null && insts.size() > 0) {
+			for (HistoricProcessInstance pi : insts) {
+				//查找流程实例当前所处的节点
+				List<HistoricTaskInstance> tasks = hs.createHistoricTaskInstanceQuery()
+						.processInstanceId(pi.getId())
+						.unfinished()
+						.orderByTaskCreateTime()
+						.desc()
+						.list();
+				if(tasks != null && tasks.size() > 0) {
+					HistoricProcessInstanceAndTask pat = new HistoricProcessInstanceAndTask(pi, tasks.get(0));
+					result.add(pat);
+				}
+			}
+		}
+		
+		//包装为spring data 的分页格式
+		Pageable pageable = new PageRequest(page, size);
+		Page<HistoricProcessInstanceAndTask> p = new PageImpl<HistoricProcessInstanceAndTask>(result,pageable,count);
+		return p;
+	}
+	
 
 }
