@@ -2,20 +2,27 @@ package com.whr.activiti.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 public class UserInfo extends IdEntity{
 	private String loginName;
 	
+	@XmlElement
 	@Column(name="fName")
 	private String name;
 	
 	@Column(name="fPassword")
 	private String password;
 	
+	@XmlElement
 	@Column(name="fGroupName")
 	private String groupName;
 	
+	@XmlElement
 	@Column(name="fGroup")
 	private String group;
 	

@@ -62,7 +62,7 @@
 	select  count(*) FROM ACT_HI_PROCINST pi
 		where pi.proc_inst_id_ in
 		(select distinct proc_inst_id_ from ACT_HI_TASKINST t where
-			t.assignee_= 'user1' and
+			t.assignee_= #{userId} and
 			t.end_time_ is not null)
 		and pi.end_act_id_ is null
 	</select>
