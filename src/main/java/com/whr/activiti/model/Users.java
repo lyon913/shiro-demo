@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Users {
 	
-	@XmlElement
+	@XmlElement(name = "user")
 	private List<UserInfo> users;
 
 	public List<UserInfo> getUsers() {
