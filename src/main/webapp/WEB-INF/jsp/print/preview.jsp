@@ -44,7 +44,7 @@ html, body {
 
 		function preview() {
 			LODOP.SET_SHOW_MODE("PREVIEW_IN_BROWSE", 1);
-			LODOP.SET_PREVIEW_WINDOW(0, 0, 1, 800, 600, '打印')
+			LODOP.SET_PREVIEW_WINDOW(0, 0, 0, 800, 600, '打印')
 			LODOP.PREVIEW();
 		}
 
