@@ -52,10 +52,16 @@
 		<property name="packagesToScan" value="com.whr.activiti.model" />
 		<property name="jpaProperties">
 			<props>
+				<!-- 使用jpa
 				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				 -->
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="javax.persistence.schema-generation.database.action">drop-and-create</prop>
+				<prop key="javax.persistence.schema-generation.scripts.action">drop-and-create</prop>
+				<prop key="javax.persistence.schema-generation.scripts.create-target">target/sql/create.sql</prop>
+				<prop key="javax.persistence.schema-generation.scripts.drop-target">target/sql/drop.sql</prop>
 			</props>
 		</property>
 	</bean>
