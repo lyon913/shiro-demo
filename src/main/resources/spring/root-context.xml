@@ -7,8 +7,6 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<import resource="activiti-context.xml" />
-
 	<!-- 扫描@Service @Component -->
 	<context:component-scan base-package="com.whr.activiti.service" />
 
@@ -39,41 +37,12 @@
 		</property>
 	</bean>
 
-	<!-- jps配置 -->
-	<bean id="jpaVendorAdapter"
-		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-	<!-- jpa entity manager factory -->
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
-		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-		
-		<property name="persistenceUnitName" value="activiti" />
-		<property name="packagesToScan" value="com.whr.activiti.model" />
-		<property name="jpaProperties">
-			<props>
-				<!-- 使用jpa
-				<prop key="hibernate.hbm2ddl.auto">create</prop>
-				 -->
-				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-				<prop key="javax.persistence.schema-generation.database.action">drop-and-create</prop>
-				<prop key="javax.persistence.schema-generation.scripts.action">drop-and-create</prop>
-				<prop key="javax.persistence.schema-generation.scripts.create-target">target/sql/create.sql</prop>
-				<prop key="javax.persistence.schema-generation.scripts.drop-target">target/sql/drop.sql</prop>
-			</props>
-		</property>
 	</bean>
 
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
 
-	<!-- 扫描 spring data jpa 仓库 -->
-	<jpa:repositories base-package="com.whr.activiti.dao"
-		entity-manager-factory-ref="entityManagerFactory"
-		transaction-manager-ref="transactionManager" />
 
 	<!-- 自定义文本 -->
 	<bean id="messageSource"
