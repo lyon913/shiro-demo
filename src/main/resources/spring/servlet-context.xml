@@ -12,33 +12,14 @@
 	<context:component-scan base-package="com.whr.activiti.web" />
 
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<annotation-driven content-negotiation-manager="contentNegotiationManager">
+	<annotation-driven>
 		<message-converters>
 			<!-- JSON MessageConverter -->
 			<beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
-			<!-- XML MessageConverter -->
-			<beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-				<beans:constructor-arg ref="jaxb2Marshaller" />
-				<beans:property name="supportedMediaTypes" value="application/xml" />
-			</beans:bean>
+
 		</message-converters>
 	</annotation-driven>
 
-	<beans:bean id="contentNegotiationManager"
-		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-		<beans:property name="defaultContentType" value="application/json" />
-		<beans:property name="favorPathExtension" value="true" />
-		<beans:property name="mediaTypes">
-			<beans:value>
-				json=application/json
-				xml=application/xml
-			</beans:value>
-		</beans:property>
-	</beans:bean>
-	<!-- 配置xml转换器和要转换的对象 -->
-	<oxm:jaxb2-marshaller id="jaxb2Marshaller">
-		<oxm:class-to-be-bound name="com.whr.activiti.model.Users" />
-	</oxm:jaxb2-marshaller>
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->
