@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
@@ -24,20 +26,11 @@
 
 	<!-- Data Source -->
 	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName">
-			<value>${jdbc.driverClassName}</value>
-		</property>
-		<property name="url">
-			<value>${jdbc.url}</value>
-		</property>
-		<property name="username">
-			<value>${jdbc.username}</value>
-		</property>
-		<property name="password">
-			<value>${jdbc.password}</value>
-		</property>
-	</bean>
+		  class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		  p:driverClassName="${jdbc.driverClassName}"
+		  p:url="${jdbc.url}"
+		  p:username="${jdbc.username}"
+		  p:password="${jdbc.password}"/>
 
 	<!-- jps配置 -->
 	<bean id="jpaVendorAdapter"
@@ -52,16 +45,20 @@
 		<property name="packagesToScan" value="com.whr.activiti.model" />
 		<property name="jpaProperties">
 			<props>
-				<!-- 使用jpa
-				<prop key="hibernate.hbm2ddl.auto">create</prop>
-				 -->
+				<!-- 使用Hibernate 自动建表-->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+
+				<!-- JAP 脚本导出-->
+				<!--
 				<prop key="javax.persistence.schema-generation.database.action">drop-and-create</prop>
 				<prop key="javax.persistence.schema-generation.scripts.action">drop-and-create</prop>
-				<prop key="javax.persistence.schema-generation.scripts.create-target">target/sql/create.sql</prop>
-				<prop key="javax.persistence.schema-generation.scripts.drop-target">target/sql/drop.sql</prop>
+				<prop key="javax.persistence.schema-generation.scripts.create-target">d:/create.sql</prop>
+				<prop key="javax.persistence.schema-generation.scripts.drop-target">d:/drop.sql</prop>
+				-->
 			</props>
 		</property>
 	</bean>
@@ -80,7 +77,7 @@
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
-				<value>messages</value>
+				<value>messages/messages</value>
 			</list>
 		</property>
 	</bean>
