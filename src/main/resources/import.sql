@@ -5,4 +5,4 @@ insert into UserInfo(loginName,fname,fpassword,fgroupName,fgroup) values('user2'
 insert into UserInfo(loginName,fname,fpassword,fgroupName,fgroup) values('user3','孙登簿','1234','登簿','GROUP_DB');
 insert into UserInfo(loginName,fname,fpassword,fgroupName,fgroup) values('user4','李缮证','1234','打证','GROUP_SZ');
 insert into UserInfo(loginName,fname,fpassword,fgroupName,fgroup) values('user5','周发证','1234','发证','GROUP_FZ');
-insert into UserInfo(loginName,fname,fpassword,fgroupName,fgroup) values('user6','吴归档','1234','归档','GROUP_GD');
+insert into UserInfo(loginName,fname,fpassword,fgroupName,fgroup) values('user6','吴归档','1234','归档','GROUP_GD'); 
