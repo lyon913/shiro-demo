@@ -3,27 +3,18 @@ package com.xqx.test.model;
 import java.io.Serializable;
 
 /**
- * 
- * @author yyhua
- *
- * @since 2015-07-15
- *
- * @Description 所有实体的父类，抽象出ID属性
+ * 实体基类
  */
-public class BaseEntity implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1L;
+public abstract class BaseEntity implements Serializable {
 
-	private Long fId;
+	private String id;
 
-	public Long getfId() {
-		return fId;
+	public String getId() {
+		return id;
 	}
 
-	public void setfId(Long fId) {
-		this.fId = fId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override
@@ -32,7 +23,7 @@ public class BaseEntity implements Serializable {
 			return true;
 		}
 		if (obj instanceof BaseEntity) {
-			return this.getfId() == ((BaseEntity) obj).getfId();
+			return this.getId() == ((BaseEntity) obj).getId();
 		}
 		return false;
 	}
