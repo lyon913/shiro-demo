@@ -1,8 +1,5 @@
 package com.xqx.test.model;
 
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.MappedJdbcTypes;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,7 +7,7 @@ import java.util.Date;
 /**
  *用户审计实体的基类
  */
-public abstract class BaseAuditEntity extends BaseEntity implements Serializable {
+public abstract class BaseAuditEntity extends BaseIdEntity implements Serializable {
 
     /**
      * 创建人Id

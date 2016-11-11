@@ -1,6 +1,7 @@
 package com.xqx.test.model;
 
 /**
+ * 收件材料
  * Created by Lyon on 2016/10/19.
  */
 public class Sjcl {
@@ -14,7 +15,6 @@ public class Sjcl {
     /**
      * 类型
      */
-
     private String type;
 
     /**
