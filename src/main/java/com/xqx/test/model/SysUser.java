@@ -2,6 +2,7 @@ package com.xqx.test.model;
 
 import com.xqx.test.security.UserDetails;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,14 +12,13 @@ import java.util.List;
 public class SysUser extends BaseAuditEntity implements UserDetails {
 
     private String loginName;
+    private String name;
     private String password;
 
-    private boolean enabled;
-    private boolean nonLocked;
-    private boolean nonExpired;
+    private boolean accountEnabled;
+    private Date expiredate;
 
-    private List<String> functionRoles;
-    private List<String> dataRoles;
+    private List<String> roles;
 
 
     ////////////////// UserDetails ////////////////////
@@ -52,4 +52,7 @@ public class SysUser extends BaseAuditEntity implements UserDetails {
         return false;
     }
     ///////////// //// //////////////
+
+
+
 }
