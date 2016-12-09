@@ -1,9 +1,7 @@
-package com.xqx.test.web;
+package com.xqx.web;
 
-import com.xqx.test.model.Cfdj;
-import com.xqx.test.model.Sjcl;
-import com.xqx.test.service.CfdjService;
-import com.xqx.test.service.SjService;
+import com.xqx.model.Cfdj;
+import com.xqx.service.CfdjService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package com.xqx.test.model;
+package com.xqx.model;
 
 /**
  * 用户和角色关系

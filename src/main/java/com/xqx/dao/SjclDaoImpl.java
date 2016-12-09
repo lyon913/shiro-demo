@@ -1,6 +1,6 @@
-package com.xqx.test.dao;
+package com.xqx.dao;
 
-import com.xqx.test.model.Sjcl;
+import com.xqx.model.Sjcl;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

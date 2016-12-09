@@ -1,4 +1,4 @@
-package com.xqx.test.model;
+package com.xqx.model;
 
 /**
  * Created by Lyon on 2016/10/19.

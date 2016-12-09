@@ -1,8 +1,8 @@
-package com.xqx.test.service;
+package com.xqx.service;
 
-import com.xqx.test.dao.SjclDao;
-import com.xqx.test.dao.SjclTemplateDao;
-import com.xqx.test.model.Sjcl;
+import com.xqx.dao.SjclTemplateDao;
+import com.xqx.dao.SjclDao;
+import com.xqx.model.Sjcl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

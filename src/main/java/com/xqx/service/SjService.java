@@ -1,6 +1,6 @@
-package com.xqx.test.service;
+package com.xqx.service;
 
-import com.xqx.test.model.Sjcl;
+import com.xqx.model.Sjcl;
 
 import java.util.List;
 

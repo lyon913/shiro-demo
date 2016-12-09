@@ -1,4 +1,4 @@
-package com.xqx.test.model;
+package com.xqx.model;
 
 /**
  * 收件材料

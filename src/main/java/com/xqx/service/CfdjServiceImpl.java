@@ -1,13 +1,12 @@
-package com.xqx.test.service;
+package com.xqx.service;
 
-import com.xqx.test.model.Cfdj;
+import com.xqx.model.Cfdj;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**

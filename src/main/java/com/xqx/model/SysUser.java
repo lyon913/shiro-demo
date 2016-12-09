@@ -1,6 +1,6 @@
-package com.xqx.test.model;
+package com.xqx.model;
 
-import com.xqx.test.security.UserDetails;
+import com.xqx.security.UserDetails;
 
 import java.util.Date;
 import java.util.List;

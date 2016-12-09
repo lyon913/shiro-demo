@@ -1,6 +1,6 @@
-package com.xqx.test.service;
+package com.xqx.service;
 
-import com.xqx.test.model.Cfdj;
+import com.xqx.model.Cfdj;
 
 import java.util.List;
 

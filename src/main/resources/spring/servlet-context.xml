@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd">
 
 	<!-- 自动扫描路径 -->
-	<context:component-scan base-package="com.xqx.test.web" />
+	<context:component-scan base-package="com.xqx.web" />
 
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven>
