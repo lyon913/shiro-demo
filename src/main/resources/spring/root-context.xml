@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
 	<!-- 扫描@Service @Component -->
-	<context:component-scan base-package="com.xqx.service,com.xqx.dao" />
+	<context:component-scan base-package="com.whr.service" />
 
 	<!-- 注解方式注入 -->
 	<context:annotation-config />
@@ -46,7 +46,14 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
+	<!-- mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.whr.mapper" />
+	</bean>
 
 	<!-- 自定义文本 -->
 	<bean id="messageSource"
