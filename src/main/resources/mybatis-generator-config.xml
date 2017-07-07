@@ -5,7 +5,7 @@
 <generatorConfiguration>
 
     <!-- !!!! Driver Class Path !!!! -->
-    <classPathEntry location="D:\maven\repo\mysql\mysql-connector-java\5.1.40\mysql-connector-java-5.1.40.jar"/>
+    <classPathEntry location="D:\maven-repo\repo\mysql\mysql-connector-java\5.1.40\mysql-connector-java-5.1.40.jar"/>
 
     <context id="context" targetRuntime="MyBatis3">
         <commentGenerator>
@@ -14,7 +14,8 @@
         </commentGenerator>
 
         <!-- !!!! Database Configurations !!!! -->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost/test1" userId="test1" password="xqx1234"/>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost/test1" userId="test1"
+                        password="xqx1234"/>
 
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
@@ -32,12 +33,22 @@
         </sqlMapGenerator>
 
         <!-- !!!! Mapper Interface Configurations !!!! -->
-        <javaClientGenerator targetPackage="com.whr.mapper" targetProject="THIS_CONFIGURATION_IS_NOT_REQUIRED" type="XMLMAPPER">
+        <javaClientGenerator targetPackage="com.whr.mapper" targetProject="THIS_CONFIGURATION_IS_NOT_REQUIRED"
+                             type="XMLMAPPER">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
         <!-- !!!! Table Configurations !!!! -->
-        <table tableName="SysUser" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="true"
-               enableUpdateByExample="false"/>
+        <table tableName="sys_user" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <property name="rootClass" value="com.whr.model.BaseAuditEntity"/>
+            <columnOverride column="id" />
+        </table>
+        <table tableName="sys_user_role" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <property name="rootClass" value="com.whr.model.BaseEntity"/>
+        </table>
     </context>
 </generatorConfiguration>

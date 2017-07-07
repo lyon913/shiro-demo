@@ -18,5 +18,10 @@
     </settings>
 
     <!-- Continue going here -->
-
+    <environments default="">
+        <environment id="">
+            <transactionManager type=""/>
+            <dataSource type=""></dataSource>
+        </environment>
+    </environments>
 </configuration>

@@ -12,7 +12,7 @@ public abstract class BaseAuditEntity extends BaseIdEntity implements Serializab
     /**
      * 创建人Id
      */
-    private String creatorId;
+    private Integer creatorId;
 
     /**
      * 创建时间
@@ -32,7 +32,7 @@ public abstract class BaseAuditEntity extends BaseIdEntity implements Serializab
     /**
      * 更新人id
      */
-    private String lastUpdaterId;
+    private Integer lastUpdaterId;
 
     /**
      * 更新时间
@@ -50,11 +50,11 @@ public abstract class BaseAuditEntity extends BaseIdEntity implements Serializab
     private String lastUpdaterIp;
 
 
-    public String getCreatorId() {
+    public Integer getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(String creatorId) {
+    public void setCreatorId(Integer creatorId) {
         this.creatorId = creatorId;
     }
 
@@ -82,11 +82,11 @@ public abstract class BaseAuditEntity extends BaseIdEntity implements Serializab
         this.creatorIp = creatorIp;
     }
 
-    public String getLastUpdaterId() {
+    public Integer getLastUpdaterId() {
         return lastUpdaterId;
     }
 
-    public void setLastUpdaterId(String lastUpdaterId) {
+    public void setLastUpdaterId(Integer lastUpdaterId) {
         this.lastUpdaterId = lastUpdaterId;
     }
 
