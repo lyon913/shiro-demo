@@ -2,9 +2,9 @@
 用户信息表
  */
 create TABLE sys_user(
-  id int not null,
-  login_name varchar(50) UNIQUE NOT NULL ,
-  password varchar(100) NOT NULL ,
+  id INT NOT NULL AUTO_INCREMENT,
+  login_name VARCHAR(50) UNIQUE NOT NULL ,
+  password VARCHAR(100) NOT NULL ,
   staff_no VARCHAR(20) NOT NULL ,
   enabled BOOL NOT NULL ,
   expire_date DATETIME,
@@ -22,7 +22,7 @@ create TABLE sys_user(
 用户角色表
  */
 create TABLE sys_user_role(
-  sys_user_id int not null,
+  sys_user_id INT NOT NULL AUTO_INCREMENT,
   sys_role VARCHAR(50),
   sys_role_name VARCHAR(100),
   PRIMARY KEY (sys_user_id,sys_role)
@@ -32,7 +32,7 @@ create TABLE sys_user_role(
 系统日志
  */
 CREATE TABLE sys_log(
-  id INT NOT NULL ,
+  id INT NOT NULL AUTO_INCREMENT,
   type VARCHAR(10) NOT NULL ,
   log VARCHAR(1000),
   op_code VARCHAR(20) NOT NULL ,
@@ -44,7 +44,7 @@ CREATE TABLE sys_log(
 员工信息
  */
 create TABLE  bus_staff_info(
-  id int not null,
+  id INT NOT NULL AUTO_INCREMENT,
   staff_no VARCHAR(20) not NULL ,
   short_name VARCHAR(80),
   staff_name VARCHAR(80),
@@ -70,7 +70,7 @@ create TABLE  bus_staff_info(
 合同
  */
 create TABLE  bus_contract_info(
-  id int not null,
+  id INT NOT NULL AUTO_INCREMENT,
   buyer varchar(100) NOT NULL  ,
   seller varchar(100) NOT NULL ,
   contract_date DATE,
@@ -96,7 +96,7 @@ create TABLE  bus_contract_info(
 客户
  */
 create TABLE bus_customer_info(
-  id int not null,
+  id INT NOT NULL AUTO_INCREMENT,
   customer_no VARCHAR(20) NOT NULL ,
   customer_level VARCHAR(10),
   customer_name VARCHAR(100),
@@ -118,7 +118,7 @@ create TABLE bus_customer_info(
 合同付款
  */
 CREATE TABLE bus_contract_pay(
-  id INT NOT NULL ,
+  id INT NOT NULL AUTO_INCREMENT,
   customer_no VARCHAR(20) NOT NULL ,
   contract_no VARCHAR(20) NOT NULL ,
   pay_money DECIMAL NOT NULL ,
@@ -138,7 +138,7 @@ CREATE TABLE bus_contract_pay(
 合同货品
  */
 CREATE TABLE bus_contract_goods(
-  id INT NOT NULL ,
+  id INT NOT NULL AUTO_INCREMENT,
   contract_no VARCHAR(20) NOT NULL ,
   goods_name VARCHAR(100) NOT NULL ,
   goods_std VARCHAR(200),
@@ -159,7 +159,7 @@ CREATE TABLE bus_contract_goods(
 货品图纸
  */
 CREATE TABLE bus_contract_goods_file(
-  id INT NOT NULL ,
+  id INT NOT NULL AUTO_INCREMENT,
   contract_no VARCHAR(20) NOT NULL ,
   goods_id int NOT NULL ,
   goods_file MEDIUMBLOB,
@@ -176,7 +176,7 @@ CREATE TABLE bus_contract_goods_file(
 开票信息
  */
 CREATE TABLE bus_receipt_info(
-  id INT NOT NULL ,
+  id INT NOT NULL AUTO_INCREMENT,
   customer_no VARCHAR(20) NOT NULL ,
   receipt_no VARCHAR(50) ,
   open_time DATE,

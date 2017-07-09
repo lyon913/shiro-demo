@@ -1,10 +1,9 @@
 package com.whr.model;
 
-/**
- * 用户和角色关系
- * Created by Lyon on 2016/11/10.
- */
-public class SysUserRole extends BaseEntity{
+import org.springframework.security.core.GrantedAuthority;
+
+public class SysUserRole implements GrantedAuthority {
+
     private Integer sysUserId;
 
     private String sysRole;
@@ -24,7 +23,7 @@ public class SysUserRole extends BaseEntity{
     }
 
     public void setSysRole(String sysRole) {
-        this.sysRole = sysRole;
+        this.sysRole = sysRole == null ? null : sysRole.trim();
     }
 
     public String getSysRoleName() {
@@ -32,6 +31,12 @@ public class SysUserRole extends BaseEntity{
     }
 
     public void setSysRoleName(String sysRoleName) {
-        this.sysRoleName = sysRoleName;
+        this.sysRoleName = sysRoleName == null ? null : sysRoleName.trim();
+    }
+
+    //=================   GrantedAuthority ========================
+    @Override
+    public String getAuthority() {
+        return this.getSysRole();
     }
 }

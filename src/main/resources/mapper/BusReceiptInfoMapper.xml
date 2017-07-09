@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whr.mapper.BusReceiptInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.whr.model.BusReceiptInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="customer_no" property="customerNo" jdbcType="VARCHAR" />
+    <result column="receipt_no" property="receiptNo" jdbcType="VARCHAR" />
+    <result column="open_time" property="openTime" jdbcType="DATE" />
+    <result column="open_sum" property="openSum" jdbcType="DECIMAL" />
+    <result column="tax" property="tax" jdbcType="DECIMAL" />
+    <result column="send_time" property="sendTime" jdbcType="DATE" />
+    <result column="waybill_no" property="waybillNo" jdbcType="VARCHAR" />
+    <result column="pay_accept" property="payAccept" jdbcType="VARCHAR" />
+    <result column="receipt_status" property="receiptStatus" jdbcType="VARCHAR" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="op_create" property="opCreate" jdbcType="VARCHAR" />
+    <result column="op_modify" property="opModify" jdbcType="VARCHAR" />
+    <result column="gtm_create" property="gtmCreate" jdbcType="TIMESTAMP" />
+    <result column="gtm_modify" property="gtmModify" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, customer_no, receipt_no, open_time, open_sum, tax, send_time, waybill_no, pay_accept, 
+    receipt_status, comments, op_create, op_modify, gtm_create, gtm_modify
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_receipt_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bus_receipt_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whr.model.BusReceiptInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_receipt_info (id, customer_no, receipt_no, 
+      open_time, open_sum, tax, 
+      send_time, waybill_no, pay_accept, 
+      receipt_status, comments, op_create, 
+      op_modify, gtm_create, gtm_modify
+      )
+    values (#{id,jdbcType=INTEGER}, #{customerNo,jdbcType=VARCHAR}, #{receiptNo,jdbcType=VARCHAR}, 
+      #{openTime,jdbcType=DATE}, #{openSum,jdbcType=DECIMAL}, #{tax,jdbcType=DECIMAL}, 
+      #{sendTime,jdbcType=DATE}, #{waybillNo,jdbcType=VARCHAR}, #{payAccept,jdbcType=VARCHAR}, 
+      #{receiptStatus,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{opCreate,jdbcType=VARCHAR}, 
+      #{opModify,jdbcType=VARCHAR}, #{gtmCreate,jdbcType=TIMESTAMP}, #{gtmModify,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.whr.model.BusReceiptInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_receipt_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="customerNo != null" >
+        customer_no,
+      </if>
+      <if test="receiptNo != null" >
+        receipt_no,
+      </if>
+      <if test="openTime != null" >
+        open_time,
+      </if>
+      <if test="openSum != null" >
+        open_sum,
+      </if>
+      <if test="tax != null" >
+        tax,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="waybillNo != null" >
+        waybill_no,
+      </if>
+      <if test="payAccept != null" >
+        pay_accept,
+      </if>
+      <if test="receiptStatus != null" >
+        receipt_status,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="opCreate != null" >
+        op_create,
+      </if>
+      <if test="opModify != null" >
+        op_modify,
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create,
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="customerNo != null" >
+        #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptNo != null" >
+        #{receiptNo,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null" >
+        #{openTime,jdbcType=DATE},
+      </if>
+      <if test="openSum != null" >
+        #{openSum,jdbcType=DECIMAL},
+      </if>
+      <if test="tax != null" >
+        #{tax,jdbcType=DECIMAL},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=DATE},
+      </if>
+      <if test="waybillNo != null" >
+        #{waybillNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccept != null" >
+        #{payAccept,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptStatus != null" >
+        #{receiptStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.BusReceiptInfo" >
+    update bus_receipt_info
+    <set >
+      <if test="customerNo != null" >
+        customer_no = #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptNo != null" >
+        receipt_no = #{receiptNo,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null" >
+        open_time = #{openTime,jdbcType=DATE},
+      </if>
+      <if test="openSum != null" >
+        open_sum = #{openSum,jdbcType=DECIMAL},
+      </if>
+      <if test="tax != null" >
+        tax = #{tax,jdbcType=DECIMAL},
+      </if>
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=DATE},
+      </if>
+      <if test="waybillNo != null" >
+        waybill_no = #{waybillNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccept != null" >
+        pay_accept = #{payAccept,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptStatus != null" >
+        receipt_status = #{receiptStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        op_create = #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        op_modify = #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify = #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.whr.model.BusReceiptInfo" >
+    update bus_receipt_info
+    set customer_no = #{customerNo,jdbcType=VARCHAR},
+      receipt_no = #{receiptNo,jdbcType=VARCHAR},
+      open_time = #{openTime,jdbcType=DATE},
+      open_sum = #{openSum,jdbcType=DECIMAL},
+      tax = #{tax,jdbcType=DECIMAL},
+      send_time = #{sendTime,jdbcType=DATE},
+      waybill_no = #{waybillNo,jdbcType=VARCHAR},
+      pay_accept = #{payAccept,jdbcType=VARCHAR},
+      receipt_status = #{receiptStatus,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=VARCHAR},
+      op_create = #{opCreate,jdbcType=VARCHAR},
+      op_modify = #{opModify,jdbcType=VARCHAR},
+      gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      gtm_modify = #{gtmModify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

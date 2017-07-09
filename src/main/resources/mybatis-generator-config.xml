@@ -5,11 +5,11 @@
 <generatorConfiguration>
 
     <!-- !!!! Driver Class Path !!!! -->
-    <classPathEntry location="D:\maven-repo\repo\mysql\mysql-connector-java\5.1.40\mysql-connector-java-5.1.40.jar"/>
+    <classPathEntry location="D:\maven\repo\mysql\mysql-connector-java\5.1.40\mysql-connector-java-5.1.40.jar"/>
 
     <context id="context" targetRuntime="MyBatis3">
         <commentGenerator>
-            <property name="suppressAllComments" value="false"/>
+            <property name="suppressAllComments" value="true"/>
             <property name="suppressDate" value="true"/>
         </commentGenerator>
 
@@ -22,7 +22,7 @@
         </javaTypeResolver>
 
         <!-- !!!! Model Configurations !!!! -->
-        <javaModelGenerator targetPackage="com.whr.mapper" targetProject="THIS_CONFIGURATION_IS_NOT_REQUIRED">
+        <javaModelGenerator targetPackage="com.whr.model" targetProject="THIS_CONFIGURATION_IS_NOT_REQUIRED">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
@@ -38,17 +38,68 @@
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
+
+        <!--    ============================================                 -->
+
         <!-- !!!! Table Configurations !!!! -->
         <table tableName="sys_user" enableCountByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false"
                enableUpdateByExample="false">
-            <property name="rootClass" value="com.whr.model.BaseAuditEntity"/>
-            <columnOverride column="id" />
+            <generatedKey column="id" sqlStatement="MySql"/>
         </table>
+
+        <!--
         <table tableName="sys_user_role" enableCountByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false"
                enableUpdateByExample="false">
-            <property name="rootClass" value="com.whr.model.BaseEntity"/>
         </table>
+        -->
+        <table tableName="bus_staff_info" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+        <table tableName="bus_contract_info" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+        <table tableName="bus_customer_info" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+        <table tableName="bus_contract_pay" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+        <table tableName="bus_contract_info" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+        <table tableName="bus_contract_goods" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+        <table tableName="bus_contract_goods_file" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="bus_receipt_info" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false"
+               enableUpdateByExample="false">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
     </context>
 </generatorConfiguration>
