@@ -3,37 +3,53 @@ package com.whr.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 public class SysUser implements UserDetails{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SELECT LAST_INSERT_ID()")
     private Integer id;
 
+    @Column(name = "login_name")
     private String loginName;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "staff_no")
     private String staffNo;
 
+    @Column(name = "enabled")
     private Boolean enabled;
 
+    @Column(name = "expire_date")
     private Date expireDate;
 
+    @Column(name = "ip_addr")
     private String ipAddr;
 
+    @Column(name = "mac_addr")
     private String macAddr;
 
+    @Column(name = "comments")
     private String comments;
 
+    @Column(name = "op_create")
     private String opCreate;
 
+    @Column(name = "op_modify")
     private String opModify;
 
+    @Column(name = "gtm_create")
     private Date gtmCreate;
 
+    @Column(name = "gtm_modify")
     private Date gtmModify;
 
+    @Transient
     private List<SysUserRole> roles;
 
 

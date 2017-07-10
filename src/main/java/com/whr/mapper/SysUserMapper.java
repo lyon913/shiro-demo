@@ -1,19 +1,9 @@
 package com.whr.mapper;
 
 import com.whr.model.SysUser;
+import tk.mybatis.mapper.common.Mapper;
 
-public interface SysUserMapper {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(SysUser record);
-
-    int insertSelective(SysUser record);
-
-    SysUser selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(SysUser record);
-
-    int updateByPrimaryKey(SysUser record);
+public interface SysUserMapper extends Mapper<SysUser> {
 
     SysUser selectByLoginName(String loginName);
 }

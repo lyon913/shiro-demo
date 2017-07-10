@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.whr.mapper.BusCustomerInfoMapper" >
   <resultMap id="BaseResultMap" type="com.whr.model.BusCustomerInfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="customer_no" property="customerNo" jdbcType="VARCHAR" />
     <result column="customer_level" property="customerLevel" jdbcType="VARCHAR" />
@@ -19,197 +22,11 @@
     <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbg.generated
+    -->
     id, customer_no, customer_level, customer_name, delivery_address, mobile_no, fax_no, 
     link_man, link_mobile, link_address, receipt_address, tax_no, receipt_mobile, open_bank, 
     account_no
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from bus_customer_info
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from bus_customer_info
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.whr.model.BusCustomerInfo" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into bus_customer_info (id, customer_no, customer_level, 
-      customer_name, delivery_address, mobile_no, 
-      fax_no, link_man, link_mobile, 
-      link_address, receipt_address, tax_no, 
-      receipt_mobile, open_bank, account_no
-      )
-    values (#{id,jdbcType=INTEGER}, #{customerNo,jdbcType=VARCHAR}, #{customerLevel,jdbcType=VARCHAR}, 
-      #{customerName,jdbcType=VARCHAR}, #{deliveryAddress,jdbcType=VARCHAR}, #{mobileNo,jdbcType=VARCHAR}, 
-      #{faxNo,jdbcType=VARCHAR}, #{linkMan,jdbcType=VARCHAR}, #{linkMobile,jdbcType=VARCHAR}, 
-      #{linkAddress,jdbcType=VARCHAR}, #{receiptAddress,jdbcType=VARCHAR}, #{taxNo,jdbcType=VARCHAR}, 
-      #{receiptMobile,jdbcType=VARCHAR}, #{openBank,jdbcType=VARCHAR}, #{accountNo,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.whr.model.BusCustomerInfo" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into bus_customer_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      id,
-      <if test="customerNo != null" >
-        customer_no,
-      </if>
-      <if test="customerLevel != null" >
-        customer_level,
-      </if>
-      <if test="customerName != null" >
-        customer_name,
-      </if>
-      <if test="deliveryAddress != null" >
-        delivery_address,
-      </if>
-      <if test="mobileNo != null" >
-        mobile_no,
-      </if>
-      <if test="faxNo != null" >
-        fax_no,
-      </if>
-      <if test="linkMan != null" >
-        link_man,
-      </if>
-      <if test="linkMobile != null" >
-        link_mobile,
-      </if>
-      <if test="linkAddress != null" >
-        link_address,
-      </if>
-      <if test="receiptAddress != null" >
-        receipt_address,
-      </if>
-      <if test="taxNo != null" >
-        tax_no,
-      </if>
-      <if test="receiptMobile != null" >
-        receipt_mobile,
-      </if>
-      <if test="openBank != null" >
-        open_bank,
-      </if>
-      <if test="accountNo != null" >
-        account_no,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{id,jdbcType=INTEGER},
-      <if test="customerNo != null" >
-        #{customerNo,jdbcType=VARCHAR},
-      </if>
-      <if test="customerLevel != null" >
-        #{customerLevel,jdbcType=VARCHAR},
-      </if>
-      <if test="customerName != null" >
-        #{customerName,jdbcType=VARCHAR},
-      </if>
-      <if test="deliveryAddress != null" >
-        #{deliveryAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="mobileNo != null" >
-        #{mobileNo,jdbcType=VARCHAR},
-      </if>
-      <if test="faxNo != null" >
-        #{faxNo,jdbcType=VARCHAR},
-      </if>
-      <if test="linkMan != null" >
-        #{linkMan,jdbcType=VARCHAR},
-      </if>
-      <if test="linkMobile != null" >
-        #{linkMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="linkAddress != null" >
-        #{linkAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="receiptAddress != null" >
-        #{receiptAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="taxNo != null" >
-        #{taxNo,jdbcType=VARCHAR},
-      </if>
-      <if test="receiptMobile != null" >
-        #{receiptMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="openBank != null" >
-        #{openBank,jdbcType=VARCHAR},
-      </if>
-      <if test="accountNo != null" >
-        #{accountNo,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.BusCustomerInfo" >
-    update bus_customer_info
-    <set >
-      <if test="customerNo != null" >
-        customer_no = #{customerNo,jdbcType=VARCHAR},
-      </if>
-      <if test="customerLevel != null" >
-        customer_level = #{customerLevel,jdbcType=VARCHAR},
-      </if>
-      <if test="customerName != null" >
-        customer_name = #{customerName,jdbcType=VARCHAR},
-      </if>
-      <if test="deliveryAddress != null" >
-        delivery_address = #{deliveryAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="mobileNo != null" >
-        mobile_no = #{mobileNo,jdbcType=VARCHAR},
-      </if>
-      <if test="faxNo != null" >
-        fax_no = #{faxNo,jdbcType=VARCHAR},
-      </if>
-      <if test="linkMan != null" >
-        link_man = #{linkMan,jdbcType=VARCHAR},
-      </if>
-      <if test="linkMobile != null" >
-        link_mobile = #{linkMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="linkAddress != null" >
-        link_address = #{linkAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="receiptAddress != null" >
-        receipt_address = #{receiptAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="taxNo != null" >
-        tax_no = #{taxNo,jdbcType=VARCHAR},
-      </if>
-      <if test="receiptMobile != null" >
-        receipt_mobile = #{receiptMobile,jdbcType=VARCHAR},
-      </if>
-      <if test="openBank != null" >
-        open_bank = #{openBank,jdbcType=VARCHAR},
-      </if>
-      <if test="accountNo != null" >
-        account_no = #{accountNo,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.whr.model.BusCustomerInfo" >
-    update bus_customer_info
-    set customer_no = #{customerNo,jdbcType=VARCHAR},
-      customer_level = #{customerLevel,jdbcType=VARCHAR},
-      customer_name = #{customerName,jdbcType=VARCHAR},
-      delivery_address = #{deliveryAddress,jdbcType=VARCHAR},
-      mobile_no = #{mobileNo,jdbcType=VARCHAR},
-      fax_no = #{faxNo,jdbcType=VARCHAR},
-      link_man = #{linkMan,jdbcType=VARCHAR},
-      link_mobile = #{linkMobile,jdbcType=VARCHAR},
-      link_address = #{linkAddress,jdbcType=VARCHAR},
-      receipt_address = #{receiptAddress,jdbcType=VARCHAR},
-      tax_no = #{taxNo,jdbcType=VARCHAR},
-      receipt_mobile = #{receiptMobile,jdbcType=VARCHAR},
-      open_bank = #{openBank,jdbcType=VARCHAR},
-      account_no = #{accountNo,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 </mapper>

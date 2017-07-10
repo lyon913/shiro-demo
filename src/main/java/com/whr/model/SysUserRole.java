@@ -2,12 +2,17 @@ package com.whr.model;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.Column;
+
 public class SysUserRole implements GrantedAuthority {
 
+    @Column(name = "sys_user_id")
     private Integer sysUserId;
 
+    @Column(name = "sys_role")
     private String sysRole;
 
+    @Column(name = "sys_role_name")
     private String sysRoleName;
 
     public Integer getSysUserId() {

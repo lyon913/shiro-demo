@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.whr.mapper.BusStaffInfoMapper" >
   <resultMap id="BaseResultMap" type="com.whr.model.BusStaffInfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="staff_no" property="staffNo" jdbcType="VARCHAR" />
     <result column="short_name" property="shortName" jdbcType="VARCHAR" />
@@ -20,268 +23,18 @@
     <result column="staff_status" property="staffStatus" jdbcType="VARCHAR" />
     <result column="comments" property="comments" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.whr.model.BusStaffInfoWithBLOBs" extends="BaseResultMap" >
-    <result column="card_front" property="cardFront" jdbcType="LONGVARBINARY" />
-    <result column="card_oppo_side" property="cardOppoSide" jdbcType="LONGVARBINARY" />
-  </resultMap>
+
   <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbg.generated
+    -->
     id, staff_no, short_name, staff_name, staff_position, entry_date, leave_date, staff_type, 
     card_no, bank_acc, ss_flag, tel_no, mobile_no, fax_no, email, staff_status, comments
   </sql>
   <sql id="Blob_Column_List" >
+    <!--
+      WARNING - @mbg.generated
+    -->
     card_front, card_oppo_side
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from bus_staff_info
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from bus_staff_info
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.whr.model.BusStaffInfoWithBLOBs" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into bus_staff_info (id, staff_no, short_name, 
-      staff_name, staff_position, entry_date, 
-      leave_date, staff_type, card_no, 
-      bank_acc, ss_flag, tel_no, 
-      mobile_no, fax_no, email, 
-      staff_status, comments, card_front, 
-      card_oppo_side)
-    values (#{id,jdbcType=INTEGER}, #{staffNo,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
-      #{staffName,jdbcType=VARCHAR}, #{staffPosition,jdbcType=VARCHAR}, #{entryDate,jdbcType=DATE}, 
-      #{leaveDate,jdbcType=DATE}, #{staffType,jdbcType=VARCHAR}, #{cardNo,jdbcType=VARCHAR}, 
-      #{bankAcc,jdbcType=VARCHAR}, #{ssFlag,jdbcType=VARCHAR}, #{telNo,jdbcType=VARCHAR}, 
-      #{mobileNo,jdbcType=VARCHAR}, #{faxNo,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{staffStatus,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{cardFront,jdbcType=LONGVARBINARY}, 
-      #{cardOppoSide,jdbcType=LONGVARBINARY})
-  </insert>
-  <insert id="insertSelective" parameterType="com.whr.model.BusStaffInfoWithBLOBs" >
-    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into bus_staff_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      id,
-      <if test="staffNo != null" >
-        staff_no,
-      </if>
-      <if test="shortName != null" >
-        short_name,
-      </if>
-      <if test="staffName != null" >
-        staff_name,
-      </if>
-      <if test="staffPosition != null" >
-        staff_position,
-      </if>
-      <if test="entryDate != null" >
-        entry_date,
-      </if>
-      <if test="leaveDate != null" >
-        leave_date,
-      </if>
-      <if test="staffType != null" >
-        staff_type,
-      </if>
-      <if test="cardNo != null" >
-        card_no,
-      </if>
-      <if test="bankAcc != null" >
-        bank_acc,
-      </if>
-      <if test="ssFlag != null" >
-        ss_flag,
-      </if>
-      <if test="telNo != null" >
-        tel_no,
-      </if>
-      <if test="mobileNo != null" >
-        mobile_no,
-      </if>
-      <if test="faxNo != null" >
-        fax_no,
-      </if>
-      <if test="email != null" >
-        email,
-      </if>
-      <if test="staffStatus != null" >
-        staff_status,
-      </if>
-      <if test="comments != null" >
-        comments,
-      </if>
-      <if test="cardFront != null" >
-        card_front,
-      </if>
-      <if test="cardOppoSide != null" >
-        card_oppo_side,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{id,jdbcType=INTEGER},
-      <if test="staffNo != null" >
-        #{staffNo,jdbcType=VARCHAR},
-      </if>
-      <if test="shortName != null" >
-        #{shortName,jdbcType=VARCHAR},
-      </if>
-      <if test="staffName != null" >
-        #{staffName,jdbcType=VARCHAR},
-      </if>
-      <if test="staffPosition != null" >
-        #{staffPosition,jdbcType=VARCHAR},
-      </if>
-      <if test="entryDate != null" >
-        #{entryDate,jdbcType=DATE},
-      </if>
-      <if test="leaveDate != null" >
-        #{leaveDate,jdbcType=DATE},
-      </if>
-      <if test="staffType != null" >
-        #{staffType,jdbcType=VARCHAR},
-      </if>
-      <if test="cardNo != null" >
-        #{cardNo,jdbcType=VARCHAR},
-      </if>
-      <if test="bankAcc != null" >
-        #{bankAcc,jdbcType=VARCHAR},
-      </if>
-      <if test="ssFlag != null" >
-        #{ssFlag,jdbcType=VARCHAR},
-      </if>
-      <if test="telNo != null" >
-        #{telNo,jdbcType=VARCHAR},
-      </if>
-      <if test="mobileNo != null" >
-        #{mobileNo,jdbcType=VARCHAR},
-      </if>
-      <if test="faxNo != null" >
-        #{faxNo,jdbcType=VARCHAR},
-      </if>
-      <if test="email != null" >
-        #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="staffStatus != null" >
-        #{staffStatus,jdbcType=VARCHAR},
-      </if>
-      <if test="comments != null" >
-        #{comments,jdbcType=VARCHAR},
-      </if>
-      <if test="cardFront != null" >
-        #{cardFront,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="cardOppoSide != null" >
-        #{cardOppoSide,jdbcType=LONGVARBINARY},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.BusStaffInfoWithBLOBs" >
-    update bus_staff_info
-    <set >
-      <if test="staffNo != null" >
-        staff_no = #{staffNo,jdbcType=VARCHAR},
-      </if>
-      <if test="shortName != null" >
-        short_name = #{shortName,jdbcType=VARCHAR},
-      </if>
-      <if test="staffName != null" >
-        staff_name = #{staffName,jdbcType=VARCHAR},
-      </if>
-      <if test="staffPosition != null" >
-        staff_position = #{staffPosition,jdbcType=VARCHAR},
-      </if>
-      <if test="entryDate != null" >
-        entry_date = #{entryDate,jdbcType=DATE},
-      </if>
-      <if test="leaveDate != null" >
-        leave_date = #{leaveDate,jdbcType=DATE},
-      </if>
-      <if test="staffType != null" >
-        staff_type = #{staffType,jdbcType=VARCHAR},
-      </if>
-      <if test="cardNo != null" >
-        card_no = #{cardNo,jdbcType=VARCHAR},
-      </if>
-      <if test="bankAcc != null" >
-        bank_acc = #{bankAcc,jdbcType=VARCHAR},
-      </if>
-      <if test="ssFlag != null" >
-        ss_flag = #{ssFlag,jdbcType=VARCHAR},
-      </if>
-      <if test="telNo != null" >
-        tel_no = #{telNo,jdbcType=VARCHAR},
-      </if>
-      <if test="mobileNo != null" >
-        mobile_no = #{mobileNo,jdbcType=VARCHAR},
-      </if>
-      <if test="faxNo != null" >
-        fax_no = #{faxNo,jdbcType=VARCHAR},
-      </if>
-      <if test="email != null" >
-        email = #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="staffStatus != null" >
-        staff_status = #{staffStatus,jdbcType=VARCHAR},
-      </if>
-      <if test="comments != null" >
-        comments = #{comments,jdbcType=VARCHAR},
-      </if>
-      <if test="cardFront != null" >
-        card_front = #{cardFront,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="cardOppoSide != null" >
-        card_oppo_side = #{cardOppoSide,jdbcType=LONGVARBINARY},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.whr.model.BusStaffInfoWithBLOBs" >
-    update bus_staff_info
-    set staff_no = #{staffNo,jdbcType=VARCHAR},
-      short_name = #{shortName,jdbcType=VARCHAR},
-      staff_name = #{staffName,jdbcType=VARCHAR},
-      staff_position = #{staffPosition,jdbcType=VARCHAR},
-      entry_date = #{entryDate,jdbcType=DATE},
-      leave_date = #{leaveDate,jdbcType=DATE},
-      staff_type = #{staffType,jdbcType=VARCHAR},
-      card_no = #{cardNo,jdbcType=VARCHAR},
-      bank_acc = #{bankAcc,jdbcType=VARCHAR},
-      ss_flag = #{ssFlag,jdbcType=VARCHAR},
-      tel_no = #{telNo,jdbcType=VARCHAR},
-      mobile_no = #{mobileNo,jdbcType=VARCHAR},
-      fax_no = #{faxNo,jdbcType=VARCHAR},
-      email = #{email,jdbcType=VARCHAR},
-      staff_status = #{staffStatus,jdbcType=VARCHAR},
-      comments = #{comments,jdbcType=VARCHAR},
-      card_front = #{cardFront,jdbcType=LONGVARBINARY},
-      card_oppo_side = #{cardOppoSide,jdbcType=LONGVARBINARY}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.whr.model.BusStaffInfo" >
-    update bus_staff_info
-    set staff_no = #{staffNo,jdbcType=VARCHAR},
-      short_name = #{shortName,jdbcType=VARCHAR},
-      staff_name = #{staffName,jdbcType=VARCHAR},
-      staff_position = #{staffPosition,jdbcType=VARCHAR},
-      entry_date = #{entryDate,jdbcType=DATE},
-      leave_date = #{leaveDate,jdbcType=DATE},
-      staff_type = #{staffType,jdbcType=VARCHAR},
-      card_no = #{cardNo,jdbcType=VARCHAR},
-      bank_acc = #{bankAcc,jdbcType=VARCHAR},
-      ss_flag = #{ssFlag,jdbcType=VARCHAR},
-      tel_no = #{telNo,jdbcType=VARCHAR},
-      mobile_no = #{mobileNo,jdbcType=VARCHAR},
-      fax_no = #{faxNo,jdbcType=VARCHAR},
-      email = #{email,jdbcType=VARCHAR},
-      staff_status = #{staffStatus,jdbcType=VARCHAR},
-      comments = #{comments,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 </mapper>

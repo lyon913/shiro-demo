@@ -1,17 +1,7 @@
 package com.whr.mapper;
 
 import com.whr.model.BusContractPay;
+import tk.mybatis.mapper.common.Mapper;
 
-public interface BusContractPayMapper {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(BusContractPay record);
-
-    int insertSelective(BusContractPay record);
-
-    BusContractPay selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(BusContractPay record);
-
-    int updateByPrimaryKey(BusContractPay record);
+public interface BusContractPayMapper extends Mapper<BusContractPay> {
 }
