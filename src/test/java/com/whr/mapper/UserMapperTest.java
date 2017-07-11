@@ -37,7 +37,7 @@ public class UserMapperTest {
         u.setEnabled(true);
         u.setLoginName("admin");
         u.setPassword("password");
-        u.setStaffNo("ST-" + System.currentTimeMillis());
+        u.setStaffNo("STAFF-" + System.currentTimeMillis());
         u.setOpCreate("admin");
         u.setOpModify("admin");
         u.setGtmCreate(new Date());

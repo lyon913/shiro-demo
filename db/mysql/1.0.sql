@@ -3,7 +3,7 @@
  */
 create TABLE sys_user(
   id INT NOT NULL AUTO_INCREMENT,
-  login_name VARCHAR(50) UNIQUE NOT NULL ,
+  login_name VARCHAR(20) UNIQUE NOT NULL ,
   password VARCHAR(100) NOT NULL ,
   staff_no VARCHAR(20) NOT NULL ,
   enabled BOOL NOT NULL ,
@@ -22,10 +22,10 @@ create TABLE sys_user(
 用户角色表
  */
 create TABLE sys_user_role(
-  sys_user_id INT NOT NULL AUTO_INCREMENT,
-  sys_role VARCHAR(50),
-  sys_role_name VARCHAR(100),
-  PRIMARY KEY (sys_user_id,sys_role)
+  id INT NOT NULL AUTO_INCREMENT,
+  sys_user_id INT NOT NULL,
+  sys_role VARCHAR(50) NOT NULL ,
+  PRIMARY KEY (id)
 );
 
 /**
@@ -45,7 +45,7 @@ CREATE TABLE sys_log(
  */
 create TABLE  bus_staff_info(
   id INT NOT NULL AUTO_INCREMENT,
-  staff_no VARCHAR(20) not NULL ,
+  staff_no VARCHAR(20) NOT NULL ,
   short_name VARCHAR(80),
   staff_name VARCHAR(80),
   staff_position VARCHAR(60),
@@ -63,6 +63,28 @@ create TABLE  bus_staff_info(
   email VARCHAR(30),
   staff_status VARCHAR(10),
   comments VARCHAR(100),
+  PRIMARY KEY (id)
+);
+
+/**
+客户
+ */
+create TABLE bus_customer_info(
+  id INT NOT NULL AUTO_INCREMENT,
+  customer_no VARCHAR(20) NOT NULL ,
+  customer_level VARCHAR(10),
+  customer_name VARCHAR(100),
+  delivery_address VARCHAR(200),
+  mobile_no VARCHAR(30),
+  fax_no VARCHAR(30),
+  link_man VARCHAR(30),
+  link_mobile VARCHAR(30),
+  link_address VARCHAR(200),
+  receipt_address VARCHAR(200),
+  tax_no VARCHAR(50),
+  receipt_mobile VARCHAR(30),
+  open_bank VARCHAR(100),
+  account_no VARCHAR(50),
   PRIMARY KEY (id)
 );
 
@@ -92,25 +114,14 @@ create TABLE  bus_contract_info(
   PRIMARY KEY (id)
 );
 
-/**
-客户
- */
-create TABLE bus_customer_info(
+CREATE TABLE bus_contract_customer_rel(
   id INT NOT NULL AUTO_INCREMENT,
+  contract_no VARCHAR(20) NOT NULL ,
   customer_no VARCHAR(20) NOT NULL ,
-  customer_level VARCHAR(10),
-  customer_name VARCHAR(100),
-  delivery_address VARCHAR(200),
-  mobile_no VARCHAR(30),
-  fax_no VARCHAR(30),
-  link_man VARCHAR(30),
-  link_mobile VARCHAR(30),
-  link_address VARCHAR(200),
-  receipt_address VARCHAR(200),
-  tax_no VARCHAR(50),
-  receipt_mobile VARCHAR(30),
-  open_bank VARCHAR(100),
-  account_no VARCHAR(50),
+  op_create VARCHAR(20) NOT NULL ,
+  op_modify VARCHAR(20) NOT NULL ,
+  gtm_create DATETIME NOT NULL ,
+  gtm_modify DATETIME NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -125,7 +136,6 @@ CREATE TABLE bus_contract_pay(
   pay_accept VARCHAR(50),
   pay_mode VARCHAR(10),
   pay_account VARCHAR(50),
-  pay_status VARCHAR(10),
   comments VARCHAR(200),
   op_create VARCHAR(20) NOT NULL ,
   op_modify VARCHAR(20) NOT NULL ,
@@ -137,9 +147,9 @@ CREATE TABLE bus_contract_pay(
 /*
 合同货品
  */
-CREATE TABLE bus_contract_goods(
+CREATE TABLE bus_goods_info(
   id INT NOT NULL AUTO_INCREMENT,
-  contract_no VARCHAR(20) NOT NULL ,
+  goods_no VARCHAR(20) NOT NULL ,
   goods_name VARCHAR(100) NOT NULL ,
   goods_std VARCHAR(200),
   goods_num INT NOT NULL ,
@@ -154,6 +164,17 @@ CREATE TABLE bus_contract_goods(
   PRIMARY KEY (id)
 );
 
+CREATE TABLE bus_contract_goods_rel(
+  id INT NOT NULL AUTO_INCREMENT,
+  contract_no VARCHAR(20),
+  goods_no VARCHAR(20),
+  op_create VARCHAR(20) NOT NULL ,
+  op_modify VARCHAR(20) NOT NULL ,
+  gtm_create DATETIME NOT NULL ,
+  gtm_modify DATETIME NOT NULL ,
+  PRIMARY KEY (id)
+);
+
 
 /**
 货品图纸
@@ -161,8 +182,9 @@ CREATE TABLE bus_contract_goods(
 CREATE TABLE bus_contract_goods_file(
   id INT NOT NULL AUTO_INCREMENT,
   contract_no VARCHAR(20) NOT NULL ,
-  goods_id int NOT NULL ,
-  goods_file MEDIUMBLOB,
+  goods_no int NOT NULL ,
+  file_name VARCHAR(200),
+  file MEDIUMBLOB,
   file_type VARCHAR(10),
   comments VARCHAR(200),
   op_create VARCHAR(20) NOT NULL ,
@@ -178,6 +200,7 @@ CREATE TABLE bus_contract_goods_file(
 CREATE TABLE bus_receipt_info(
   id INT NOT NULL AUTO_INCREMENT,
   customer_no VARCHAR(20) NOT NULL ,
+  contract_no VARCHAR(20),
   receipt_no VARCHAR(50) ,
   open_time DATE,
   open_sum DECIMAL,
