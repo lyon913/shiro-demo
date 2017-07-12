@@ -1,57 +1,48 @@
 package com.whr.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-public class SysUser implements UserDetails{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SELECT LAST_INSERT_ID()")
+public class SysUser implements IdEntity,AuditEntity,UserDetails{
     private Integer id;
 
-    @Column(name = "login_name")
+    @NotEmpty
     private String loginName;
 
-    @Column(name = "password")
-    private String password;
+    @NotEmpty
+    private String pwd;
 
-    @Column(name = "staff_no")
+    @NotEmpty
     private String staffNo;
 
-    @Column(name = "enabled")
-    private Boolean enabled;
+    private Boolean accEnabled;
 
-    @Column(name = "expire_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
-    @Column(name = "ip_addr")
     private String ipAddr;
 
-    @Column(name = "mac_addr")
     private String macAddr;
 
-    @Column(name = "comments")
     private String comments;
 
-    @Column(name = "op_create")
     private String opCreate;
 
-    @Column(name = "op_modify")
     private String opModify;
 
-    @Column(name = "gtm_create")
     private Date gtmCreate;
 
-    @Column(name = "gtm_modify")
     private Date gtmModify;
 
-    @Transient
     private List<SysUserRole> roles;
 
+    private BusStaffInfo staffInfo;
 
     public Integer getId() {
         return id;
@@ -69,8 +60,12 @@ public class SysUser implements UserDetails{
         this.loginName = loginName == null ? null : loginName.trim();
     }
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+    public String getPwd(){
+        return this.pwd;
+    }
+
+    public void setPwd(String password) {
+        this.pwd = password == null ? null : password.trim();
     }
 
     public String getStaffNo() {
@@ -81,12 +76,12 @@ public class SysUser implements UserDetails{
         this.staffNo = staffNo == null ? null : staffNo.trim();
     }
 
-    //public Boolean getEnabled() {
-    //    return enabled;
-    //}
+    public Boolean getAccEnabled() {
+        return accEnabled;
+    }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setAccEnabled(Boolean accEnabled) {
+        this.accEnabled = accEnabled;
     }
 
     public Date getExpireDate() {
@@ -153,12 +148,21 @@ public class SysUser implements UserDetails{
         this.gtmModify = gtmModify;
     }
 
+
     public List<SysUserRole> getRoles() {
         return roles;
     }
 
     public void setRoles(List<SysUserRole> roles) {
         this.roles = roles;
+    }
+
+    public BusStaffInfo getStaffInfo() {
+        return staffInfo;
+    }
+
+    public void setStaffInfo(BusStaffInfo staffInfo) {
+        this.staffInfo = staffInfo;
     }
 
     /////       UserDetails           //////
@@ -169,7 +173,7 @@ public class SysUser implements UserDetails{
 
     @Override
     public String getPassword() {
-        return password;
+        return pwd;
     }
 
     @Override
@@ -187,7 +191,7 @@ public class SysUser implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        return enabled;
+        return accEnabled;
     }
 
     @Override
@@ -197,6 +201,6 @@ public class SysUser implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return accEnabled;
     }
 }

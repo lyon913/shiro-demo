@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whr.mapper.BusContractCustomerRelMapper" >
+  <resultMap id="BaseResultMap" type="com.whr.model.BusContractCustomerRel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="contract_no" property="contractNo" jdbcType="VARCHAR" />
+    <result column="customer_no" property="customerNo" jdbcType="VARCHAR" />
+    <result column="op_create" property="opCreate" jdbcType="VARCHAR" />
+    <result column="op_modify" property="opModify" jdbcType="VARCHAR" />
+    <result column="gtm_create" property="gtmCreate" jdbcType="TIMESTAMP" />
+    <result column="gtm_modify" property="gtmModify" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, contract_no, customer_no, op_create, op_modify, gtm_create, gtm_modify
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_contract_customer_rel
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bus_contract_customer_rel
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whr.model.BusContractCustomerRel" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_contract_customer_rel (id, contract_no, customer_no, 
+      op_create, op_modify, gtm_create, 
+      gtm_modify)
+    values (#{id,jdbcType=INTEGER}, #{contractNo,jdbcType=VARCHAR}, #{customerNo,jdbcType=VARCHAR}, 
+      #{opCreate,jdbcType=VARCHAR}, #{opModify,jdbcType=VARCHAR}, #{gtmCreate,jdbcType=TIMESTAMP}, 
+      #{gtmModify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.whr.model.BusContractCustomerRel" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_contract_customer_rel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="contractNo != null" >
+        contract_no,
+      </if>
+      <if test="customerNo != null" >
+        customer_no,
+      </if>
+      <if test="opCreate != null" >
+        op_create,
+      </if>
+      <if test="opModify != null" >
+        op_modify,
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create,
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="contractNo != null" >
+        #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="customerNo != null" >
+        #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.BusContractCustomerRel" >
+    update bus_contract_customer_rel
+    <set >
+      <if test="contractNo != null" >
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="customerNo != null" >
+        customer_no = #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        op_create = #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        op_modify = #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify = #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.whr.model.BusContractCustomerRel" >
+    update bus_contract_customer_rel
+    set contract_no = #{contractNo,jdbcType=VARCHAR},
+      customer_no = #{customerNo,jdbcType=VARCHAR},
+      op_create = #{opCreate,jdbcType=VARCHAR},
+      op_modify = #{opModify,jdbcType=VARCHAR},
+      gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      gtm_modify = #{gtmModify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

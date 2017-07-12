@@ -63,7 +63,7 @@ Version 1.4.5
 * Improvement
  * window: The displaying style can be customized.
  * window: The 'border' property allows the user to set different border style.
- * navpanel: The 'href' property is enabled to load content from remote server.
+ * navpanel: The 'href' property is accEnabled to load content from remote server.
  * combotree: The 'setValue' and 'setValues' methods accept the paremter values in 'id' and 'text' pairs
  * combobox: Add 'showItemIcon' property.
  * combobox: Set 'groupPosition' property to 'sticky' to stick the item group to the top of drop-down panel.

@@ -2,14 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.whr.mapper.SysUserMapper" >
   <resultMap id="BaseResultMap" type="com.whr.model.SysUser" >
-    <!--
-      WARNING - @mbg.generated
-    -->
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="login_name" property="loginName" jdbcType="VARCHAR" />
-    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
     <result column="staff_no" property="staffNo" jdbcType="VARCHAR" />
-    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="acc_enabled" property="accEnabled" jdbcType="BIT" />
     <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP" />
     <result column="ip_addr" property="ipAddr" jdbcType="VARCHAR" />
     <result column="mac_addr" property="macAddr" jdbcType="VARCHAR" />
@@ -19,17 +16,219 @@
     <result column="gtm_create" property="gtmCreate" jdbcType="TIMESTAMP" />
     <result column="gtm_modify" property="gtmModify" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <resultMap id="ResultMapWithStaffInfo" type="com.whr.model.SysUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="staff_no" property="staffNo" jdbcType="VARCHAR" />
+    <result column="acc_enabled" property="accEnabled" jdbcType="BIT" />
+    <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="ip_addr" property="ipAddr" jdbcType="VARCHAR" />
+    <result column="mac_addr" property="macAddr" jdbcType="VARCHAR" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="op_create" property="opCreate" jdbcType="VARCHAR" />
+    <result column="op_modify" property="opModify" jdbcType="VARCHAR" />
+    <result column="gtm_create" property="gtmCreate" jdbcType="TIMESTAMP" />
+    <result column="gtm_modify" property="gtmModify" jdbcType="TIMESTAMP" />
+    <association property="staffInfo" resultMap="com.whr.mapper.BusStaffInfoMapper.BaseResultMap"/>
+  </resultMap>
   <sql id="Base_Column_List" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    id, login_name, password, staff_no, enabled, expire_date, ip_addr, mac_addr, comments, 
+    id, login_name, pwd, staff_no, acc_enabled, expire_date, ip_addr, mac_addr, comments,
     op_create, op_modify, gtm_create, gtm_modify
   </sql>
-    <select id="selectByLoginName" resultType="com.whr.model.SysUser">
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List"/>
+    from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectByLoginName" resultMap="BaseResultMap">
       SELECT
       <include refid="Base_Column_List"/>
       FROM sys_user
-      WHERE login_name = #{loginName}
+      WHERE login_name=#{loginName}
     </select>
+
+  <!-- 用户查询-->
+  <select id="query" resultMap="ResultMapWithStaffInfo">
+    SELECT
+      *
+    FROM sys_user u LEFT JOIN bus_staff_info s ON (u.staff_no = s.staff_no)
+    WHERE 1=1
+    <if test="loginName!=null and loginName != '' ">
+      and u.login_name = #{loginName}
+    </if>
+    <if test="staffNo!=null and staffNo!=''">
+      and u.staff_no = #{staffNo}
+    </if>
+
+    <if test="staffName!=null and staffName != ''">
+      and s.staff_name = #{staffName}
+    </if>
+
+
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whr.model.SysUser" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_user (id, login_name, pwd,
+      staff_no, acc_enabled, expire_date,
+      ip_addr, mac_addr, comments, 
+      op_create, op_modify, gtm_create, 
+      gtm_modify)
+    values (#{id,jdbcType=INTEGER}, #{loginName,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR},
+      #{staffNo,jdbcType=VARCHAR}, #{accEnabled,jdbcType=BIT}, #{expireDate,jdbcType=TIMESTAMP},
+      #{ipAddr,jdbcType=VARCHAR}, #{macAddr,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, 
+      #{opCreate,jdbcType=VARCHAR}, #{opModify,jdbcType=VARCHAR}, #{gtmCreate,jdbcType=TIMESTAMP}, 
+      #{gtmModify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.whr.model.SysUser" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="loginName != null" >
+        login_name,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+      <if test="staffNo != null" >
+        staff_no,
+      </if>
+      <if test="accEnabled != null" >
+        acc_enabled,
+      </if>
+      <if test="expireDate != null" >
+        expire_date,
+      </if>
+      <if test="ipAddr != null" >
+        ip_addr,
+      </if>
+      <if test="macAddr != null" >
+        mac_addr,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="opCreate != null" >
+        op_create,
+      </if>
+      <if test="opModify != null" >
+        op_modify,
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create,
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="loginName != null" >
+        #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="staffNo != null" >
+        #{staffNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accEnabled != null" >
+        #{acc_enabled,jdbcType=BIT},
+      </if>
+      <if test="expireDate != null" >
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ipAddr != null" >
+        #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="macAddr != null" >
+        #{macAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.SysUser" >
+    update sys_user
+    <set >
+      <if test="loginName != null" >
+        login_name = #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="staffNo != null" >
+        staff_no = #{staffNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accEnabled != null" >
+        acc_enabled = #{accEnabled,jdbcType=BIT},
+      </if>
+      <if test="expireDate != null" >
+        expire_date = #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ipAddr != null" >
+        ip_addr = #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="macAddr != null" >
+        mac_addr = #{macAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        op_create = #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        op_modify = #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify = #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.whr.model.SysUser" >
+    update sys_user
+    set login_name = #{loginName,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      staff_no = #{staffNo,jdbcType=VARCHAR},
+      acc_enabled = #{accEnabled,jdbcType=BIT},
+      expire_date = #{expireDate,jdbcType=TIMESTAMP},
+      ip_addr = #{ipAddr,jdbcType=VARCHAR},
+      mac_addr = #{macAddr,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=VARCHAR},
+      op_create = #{opCreate,jdbcType=VARCHAR},
+      op_modify = #{opModify,jdbcType=VARCHAR},
+      gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      gtm_modify = #{gtmModify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 </mapper>

@@ -2,18 +2,12 @@ package com.whr.model;
 
 import java.util.Date;
 
-public class BusContractGoodsFile {
+public class BusContractGoodsRel {
     private Integer id;
 
     private String contractNo;
 
-    private Integer goodsNo;
-
-    private String fileName;
-
-    private String fileType;
-
-    private String comments;
+    private String goodsNo;
 
     private String opCreate;
 
@@ -22,8 +16,6 @@ public class BusContractGoodsFile {
     private Date gtmCreate;
 
     private Date gtmModify;
-
-    private byte[] file;
 
     public Integer getId() {
         return id;
@@ -41,36 +33,12 @@ public class BusContractGoodsFile {
         this.contractNo = contractNo == null ? null : contractNo.trim();
     }
 
-    public Integer getGoodsNo() {
+    public String getGoodsNo() {
         return goodsNo;
     }
 
-    public void setGoodsNo(Integer goodsNo) {
-        this.goodsNo = goodsNo;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName == null ? null : fileName.trim();
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType == null ? null : fileType.trim();
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments == null ? null : comments.trim();
+    public void setGoodsNo(String goodsNo) {
+        this.goodsNo = goodsNo == null ? null : goodsNo.trim();
     }
 
     public String getOpCreate() {
@@ -103,13 +71,5 @@ public class BusContractGoodsFile {
 
     public void setGtmModify(Date gtmModify) {
         this.gtmModify = gtmModify;
-    }
-
-    public byte[] getFile() {
-        return file;
-    }
-
-    public void setFile(byte[] file) {
-        this.file = file;
     }
 }

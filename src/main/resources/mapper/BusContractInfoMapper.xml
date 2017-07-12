@@ -1,36 +1,261 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.whr.mapper.BusContractInfoMapper">
-  <resultMap id="BaseResultMap" type="com.whr.model.BusContractInfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="buyer" jdbcType="VARCHAR" property="buyer" />
-    <result column="seller" jdbcType="VARCHAR" property="seller" />
-    <result column="contract_date" jdbcType="DATE" property="contractDate" />
-    <result column="contract_no" jdbcType="VARCHAR" property="contractNo" />
-    <result column="customer_no" jdbcType="VARCHAR" property="customerNo" />
-    <result column="total" jdbcType="DECIMAL" property="total" />
-    <result column="favour" jdbcType="DECIMAL" property="favour" />
-    <result column="standard" jdbcType="VARCHAR" property="standard" />
-    <result column="delivery_date" jdbcType="DATE" property="deliveryDate" />
-    <result column="delivery_place" jdbcType="VARCHAR" property="deliveryPlace" />
-    <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
-    <result column="pay_condition" jdbcType="VARCHAR" property="payCondition" />
-    <result column="contract_status" jdbcType="VARCHAR" property="contractStatus" />
-    <result column="comments" jdbcType="VARCHAR" property="comments" />
-    <result column="op_create" jdbcType="VARCHAR" property="opCreate" />
-    <result column="op_modify" jdbcType="VARCHAR" property="opModify" />
-    <result column="gtm_create" jdbcType="TIMESTAMP" property="gtmCreate" />
-    <result column="gtm_modify" jdbcType="TIMESTAMP" property="gtmModify" />
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whr.mapper.BusContractInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.whr.model.BusContractInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="buyer" property="buyer" jdbcType="VARCHAR" />
+    <result column="seller" property="seller" jdbcType="VARCHAR" />
+    <result column="contract_date" property="contractDate" jdbcType="DATE" />
+    <result column="contract_no" property="contractNo" jdbcType="VARCHAR" />
+    <result column="customer_no" property="customerNo" jdbcType="VARCHAR" />
+    <result column="total" property="total" jdbcType="DECIMAL" />
+    <result column="favour" property="favour" jdbcType="DECIMAL" />
+    <result column="standard" property="standard" jdbcType="VARCHAR" />
+    <result column="delivery_date" property="deliveryDate" jdbcType="DATE" />
+    <result column="delivery_place" property="deliveryPlace" jdbcType="VARCHAR" />
+    <result column="delivery_address" property="deliveryAddress" jdbcType="VARCHAR" />
+    <result column="pay_condition" property="payCondition" jdbcType="VARCHAR" />
+    <result column="contract_status" property="contractStatus" jdbcType="VARCHAR" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="op_create" property="opCreate" jdbcType="VARCHAR" />
+    <result column="op_modify" property="opModify" jdbcType="VARCHAR" />
+    <result column="gtm_create" property="gtmCreate" jdbcType="TIMESTAMP" />
+    <result column="gtm_modify" property="gtmModify" jdbcType="TIMESTAMP" />
   </resultMap>
-  <sql id="Base_Column_List">
-    <!--
-      WARNING - @mbg.generated
-    -->
+  <sql id="Base_Column_List" >
     id, buyer, seller, contract_date, contract_no, customer_no, total, favour, standard, 
     delivery_date, delivery_place, delivery_address, pay_condition, contract_status, 
     comments, op_create, op_modify, gtm_create, gtm_modify
   </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_contract_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bus_contract_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whr.model.BusContractInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_contract_info (id, buyer, seller, 
+      contract_date, contract_no, customer_no, 
+      total, favour, standard, 
+      delivery_date, delivery_place, delivery_address, 
+      pay_condition, contract_status, comments, 
+      op_create, op_modify, gtm_create, 
+      gtm_modify)
+    values (#{id,jdbcType=INTEGER}, #{buyer,jdbcType=VARCHAR}, #{seller,jdbcType=VARCHAR}, 
+      #{contractDate,jdbcType=DATE}, #{contractNo,jdbcType=VARCHAR}, #{customerNo,jdbcType=VARCHAR}, 
+      #{total,jdbcType=DECIMAL}, #{favour,jdbcType=DECIMAL}, #{standard,jdbcType=VARCHAR}, 
+      #{deliveryDate,jdbcType=DATE}, #{deliveryPlace,jdbcType=VARCHAR}, #{deliveryAddress,jdbcType=VARCHAR}, 
+      #{payCondition,jdbcType=VARCHAR}, #{contractStatus,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, 
+      #{opCreate,jdbcType=VARCHAR}, #{opModify,jdbcType=VARCHAR}, #{gtmCreate,jdbcType=TIMESTAMP}, 
+      #{gtmModify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.whr.model.BusContractInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_contract_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="buyer != null" >
+        buyer,
+      </if>
+      <if test="seller != null" >
+        seller,
+      </if>
+      <if test="contractDate != null" >
+        contract_date,
+      </if>
+      <if test="contractNo != null" >
+        contract_no,
+      </if>
+      <if test="customerNo != null" >
+        customer_no,
+      </if>
+      <if test="total != null" >
+        total,
+      </if>
+      <if test="favour != null" >
+        favour,
+      </if>
+      <if test="standard != null" >
+        standard,
+      </if>
+      <if test="deliveryDate != null" >
+        delivery_date,
+      </if>
+      <if test="deliveryPlace != null" >
+        delivery_place,
+      </if>
+      <if test="deliveryAddress != null" >
+        delivery_address,
+      </if>
+      <if test="payCondition != null" >
+        pay_condition,
+      </if>
+      <if test="contractStatus != null" >
+        contract_status,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="opCreate != null" >
+        op_create,
+      </if>
+      <if test="opModify != null" >
+        op_modify,
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create,
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="buyer != null" >
+        #{buyer,jdbcType=VARCHAR},
+      </if>
+      <if test="seller != null" >
+        #{seller,jdbcType=VARCHAR},
+      </if>
+      <if test="contractDate != null" >
+        #{contractDate,jdbcType=DATE},
+      </if>
+      <if test="contractNo != null" >
+        #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="customerNo != null" >
+        #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="total != null" >
+        #{total,jdbcType=DECIMAL},
+      </if>
+      <if test="favour != null" >
+        #{favour,jdbcType=DECIMAL},
+      </if>
+      <if test="standard != null" >
+        #{standard,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDate != null" >
+        #{deliveryDate,jdbcType=DATE},
+      </if>
+      <if test="deliveryPlace != null" >
+        #{deliveryPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryAddress != null" >
+        #{deliveryAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="payCondition != null" >
+        #{payCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="contractStatus != null" >
+        #{contractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.BusContractInfo" >
+    update bus_contract_info
+    <set >
+      <if test="buyer != null" >
+        buyer = #{buyer,jdbcType=VARCHAR},
+      </if>
+      <if test="seller != null" >
+        seller = #{seller,jdbcType=VARCHAR},
+      </if>
+      <if test="contractDate != null" >
+        contract_date = #{contractDate,jdbcType=DATE},
+      </if>
+      <if test="contractNo != null" >
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="customerNo != null" >
+        customer_no = #{customerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=DECIMAL},
+      </if>
+      <if test="favour != null" >
+        favour = #{favour,jdbcType=DECIMAL},
+      </if>
+      <if test="standard != null" >
+        standard = #{standard,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDate != null" >
+        delivery_date = #{deliveryDate,jdbcType=DATE},
+      </if>
+      <if test="deliveryPlace != null" >
+        delivery_place = #{deliveryPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryAddress != null" >
+        delivery_address = #{deliveryAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="payCondition != null" >
+        pay_condition = #{payCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="contractStatus != null" >
+        contract_status = #{contractStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        op_create = #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        op_modify = #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify = #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.whr.model.BusContractInfo" >
+    update bus_contract_info
+    set buyer = #{buyer,jdbcType=VARCHAR},
+      seller = #{seller,jdbcType=VARCHAR},
+      contract_date = #{contractDate,jdbcType=DATE},
+      contract_no = #{contractNo,jdbcType=VARCHAR},
+      customer_no = #{customerNo,jdbcType=VARCHAR},
+      total = #{total,jdbcType=DECIMAL},
+      favour = #{favour,jdbcType=DECIMAL},
+      standard = #{standard,jdbcType=VARCHAR},
+      delivery_date = #{deliveryDate,jdbcType=DATE},
+      delivery_place = #{deliveryPlace,jdbcType=VARCHAR},
+      delivery_address = #{deliveryAddress,jdbcType=VARCHAR},
+      pay_condition = #{payCondition,jdbcType=VARCHAR},
+      contract_status = #{contractStatus,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=VARCHAR},
+      op_create = #{opCreate,jdbcType=VARCHAR},
+      op_modify = #{opModify,jdbcType=VARCHAR},
+      gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      gtm_modify = #{gtmModify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 </mapper>

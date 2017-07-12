@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whr.mapper.BusGoodsInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.whr.model.BusGoodsInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_std" property="goodsStd" jdbcType="VARCHAR" />
+    <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />
+    <result column="sum_price" property="sumPrice" jdbcType="DECIMAL" />
+    <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
+    <result column="goods_type" property="goodsType" jdbcType="VARCHAR" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="op_create" property="opCreate" jdbcType="VARCHAR" />
+    <result column="op_modify" property="opModify" jdbcType="VARCHAR" />
+    <result column="gtm_create" property="gtmCreate" jdbcType="TIMESTAMP" />
+    <result column="gtm_modify" property="gtmModify" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_no, goods_name, goods_std, goods_num, sum_price, unit_price, goods_type, 
+    comments, op_create, op_modify, gtm_create, gtm_modify
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_goods_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bus_goods_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whr.model.BusGoodsInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_goods_info (id, goods_no, goods_name, 
+      goods_std, goods_num, sum_price, 
+      unit_price, goods_type, comments, 
+      op_create, op_modify, gtm_create, 
+      gtm_modify)
+    values (#{id,jdbcType=INTEGER}, #{goodsNo,jdbcType=VARCHAR}, #{goodsName,jdbcType=VARCHAR}, 
+      #{goodsStd,jdbcType=VARCHAR}, #{goodsNum,jdbcType=INTEGER}, #{sumPrice,jdbcType=DECIMAL}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{goodsType,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, 
+      #{opCreate,jdbcType=VARCHAR}, #{opModify,jdbcType=VARCHAR}, #{gtmCreate,jdbcType=TIMESTAMP}, 
+      #{gtmModify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.whr.model.BusGoodsInfo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bus_goods_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="goodsNo != null" >
+        goods_no,
+      </if>
+      <if test="goodsName != null" >
+        goods_name,
+      </if>
+      <if test="goodsStd != null" >
+        goods_std,
+      </if>
+      <if test="goodsNum != null" >
+        goods_num,
+      </if>
+      <if test="sumPrice != null" >
+        sum_price,
+      </if>
+      <if test="unitPrice != null" >
+        unit_price,
+      </if>
+      <if test="goodsType != null" >
+        goods_type,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="opCreate != null" >
+        op_create,
+      </if>
+      <if test="opModify != null" >
+        op_modify,
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create,
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="goodsNo != null" >
+        #{goodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsStd != null" >
+        #{goodsStd,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsNum != null" >
+        #{goodsNum,jdbcType=INTEGER},
+      </if>
+      <if test="sumPrice != null" >
+        #{sumPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null" >
+        #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsType != null" >
+        #{goodsType,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.whr.model.BusGoodsInfo" >
+    update bus_goods_info
+    <set >
+      <if test="goodsNo != null" >
+        goods_no = #{goodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsStd != null" >
+        goods_std = #{goodsStd,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsNum != null" >
+        goods_num = #{goodsNum,jdbcType=INTEGER},
+      </if>
+      <if test="sumPrice != null" >
+        sum_price = #{sumPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null" >
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsType != null" >
+        goods_type = #{goodsType,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="opCreate != null" >
+        op_create = #{opCreate,jdbcType=VARCHAR},
+      </if>
+      <if test="opModify != null" >
+        op_modify = #{opModify,jdbcType=VARCHAR},
+      </if>
+      <if test="gtmCreate != null" >
+        gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gtmModify != null" >
+        gtm_modify = #{gtmModify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.whr.model.BusGoodsInfo" >
+    update bus_goods_info
+    set goods_no = #{goodsNo,jdbcType=VARCHAR},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      goods_std = #{goodsStd,jdbcType=VARCHAR},
+      goods_num = #{goodsNum,jdbcType=INTEGER},
+      sum_price = #{sumPrice,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      goods_type = #{goodsType,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=VARCHAR},
+      op_create = #{opCreate,jdbcType=VARCHAR},
+      op_modify = #{opModify,jdbcType=VARCHAR},
+      gtm_create = #{gtmCreate,jdbcType=TIMESTAMP},
+      gtm_modify = #{gtmModify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

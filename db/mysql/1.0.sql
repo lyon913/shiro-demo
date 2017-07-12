@@ -4,9 +4,9 @@
 create TABLE sys_user(
   id INT NOT NULL AUTO_INCREMENT,
   login_name VARCHAR(20) UNIQUE NOT NULL ,
-  password VARCHAR(100) NOT NULL ,
+  pwd VARCHAR(100) NOT NULL ,
   staff_no VARCHAR(20) NOT NULL ,
-  enabled BOOL NOT NULL ,
+  acc_enabled BOOL NOT NULL ,
   expire_date DATETIME,
   ip_addr VARCHAR(50),
   mac_addr VARCHAR(50),

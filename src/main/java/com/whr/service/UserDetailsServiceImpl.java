@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			throw new UsernameNotFoundException("用户名不正确。");
 		}
 
-		List<SysUserRole> roles = roleMapper.selectByUserId(sysUser.getId());
+		List<SysUserRole> roles = roleMapper.selectBySysUserId(sysUser.getId());
 		sysUser.setRoles(roles);
 		
 		return sysUser;
