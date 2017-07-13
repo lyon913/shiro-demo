@@ -15,6 +15,7 @@
     <title>用户列表</title>
 </head>
 <body>
+
 <s:form modelAttribute="key" method="post">
     <label>登录名：</label>
     <s:input path="loginName"/>
@@ -27,12 +28,15 @@
 
     <button type="submit">查询</button>
 </s:form>
+
+<a href="${_ctx}/admin/user/new">新增</a>
 <table>
     <thead>
     <th>登录名</th>
     <th>姓名</th>
     <th>员工编号</th>
     <th>账户启用</th>
+    <th>账户有效期</th>
     <th>职位</th>
     <th>入职日期</th>
     <th>离职日期</th>
@@ -46,16 +50,27 @@
             <td>${user.staffInfo.staffName}</td>
             <td>${user.staffNo}</td>
             <td>${user.accEnabled}</td>
+            <td><fmt:formatDate value="${user.expireDate}" pattern="yyyy-MM-dd"/></td>
             <td>${user.staffInfo.staffPosition}</td>
             <td><fmt:formatDate value="${user.staffInfo.entryDate}" pattern="yyyy-MM-dd"/> </td>
             <td><fmt:formatDate value="${user.staffInfo.leaveDate}" pattern="yyyy-MM-dd"/></td>
             <td>
                 <a href="/admin/user/${user.id}/edit">编辑</a>
+                <a href="#" onclick="deleteUser('${user.id}')">删除</a>
             </td>
         </tr>
     </c:forEach>
     </tbody>
 
+    <script type="text/javascript">
+        function deleteUser(id){
+            var deleteUrl = "${_ctx}/admin/user/" + id + "/delete";
+            var confirmMessage = "删除操作无法恢复，是否确定要删除该用户？"
+            if(confirm(confirmMessage)){
+                window.location = deleteUrl;
+            }
+        }
+    </script>
 </table>
 
 </body>

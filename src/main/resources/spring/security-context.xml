@@ -15,13 +15,14 @@
 		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
 		<intercept-url pattern="/api/**" access="hasRole('ROLE_API_USER')" />
 		-->
+		<!-- 通配所有页面，应放在最后一条-->
 		<intercept-url pattern="/**" access="isAuthenticated()" />
 		
 		<form-login login-page='/login.jsp' 
 			login-processing-url="/login_check"
 			username-parameter="username" 
 			password-parameter="password"
-                    default-target-url="/home"
+                    default-target-url="/main"
                     always-use-default-target="true"
         />
 		<logout logout-url="/logout" />

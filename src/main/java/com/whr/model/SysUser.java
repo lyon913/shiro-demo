@@ -186,7 +186,7 @@ public class SysUser implements IdEntity,AuditEntity,UserDetails{
         if(expireDate == null){
             return true;
         }
-        return expireDate.compareTo(new Date()) < 0;
+        return expireDate.compareTo(new Date()) > 0;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.whr.service;
 
 import com.whr.dto.SysUserQueryKey;
+import com.whr.dto.ValidationResult;
 import com.whr.mapper.SysUserMapper;
 import com.whr.model.SysUser;
 import com.whr.utils.AuditUtil;
@@ -44,5 +45,23 @@ public class SysUserServiceImpl implements SysUserService {
         }else{
             um.updateByPrimaryKey(user);
         }
+    }
+
+    @Override
+    @Transactional
+    public void delete(int userId) {
+        um.deleteByPrimaryKey(userId);
+    }
+
+    @Override
+    public ValidationResult validateLoginName(String loginName) {
+        SysUser user = um.selectByLoginName(loginName);
+        if(user != null){
+            ValidationResult r = new ValidationResult("loginName","用户名已存在",true);
+            return r;
+        }
+
+        ValidationResult r = new ValidationResult("loginName","",false);
+        return r;
     }
 }
